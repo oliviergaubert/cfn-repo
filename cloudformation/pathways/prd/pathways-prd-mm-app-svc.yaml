@@ -1,0 +1,105 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This is a parent template for an application service to implement all the AWS resources 
+  required to support buid, packaging and deployment into a dynamically generated application
+  service environment using an AWS ECS Cluster, Task Defintion and Service. In addition, an 
+  Application Load Balancer is created to support Service Discovery.
+
+
+Parameters:
+  LaunchType:
+    Type: String
+    Default: EC2
+    Description: >
+      The launch type for your service. Selecting EC2 will create an Auto
+      Scaling group of t2.micro instances for your cluster. 
+      See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html
+
+  GitHubRepo:
+    Type: String
+    Description: The repo name of the sample service.
+    Default: "app-service-b"
+
+  GitHubBranch:
+    Type: String
+    Description: The branch of the repo to continuously deploy.
+    Default: develop
+
+  GitHubUser:
+    Type: String
+    Description: Your username on GitHub.
+    Default: "{{resolve:secretsmanager:MediaManagerGitHubLogin:SecretString:username}}"
+
+  GitHubToken:
+    Type: String
+    Description: OAuth GitHub Token for the user specified. (https://github.com/settings/tokens)
+    Default: "{{resolve:secretsmanager:MediaManagerGitHubLogin:SecretString:password}}"
+    NoEcho: true
+
+  ArtifactBucketName:
+    Type: String
+    Default: !Ref AWS::StackName
+    Description: The S3 bucket in which to deploy build artifacts.
+
+  TemplateBucket:
+    Type: String
+    Description: The S3 bucket from which to fetch the templates used by this stack.
+
+  VpcId:
+    Type: String
+    Default: "{{resolve:ssm:pathways-dev-vpc-id:1}}"
+
+Resources:
+  Cluster:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/ecs-cluster.yaml"
+      Parameters:
+        LaunchType: !Ref LaunchType
+        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
+        Subnets: "{{resolve:ssm:pathways-dev-vpc-subnets:1}}"
+        VpcId: "{{resolve:ssm:pathways-dev-vpc-id:1}}"
+
+  DeploymentPipeline:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/codepipeline-pipeline.yaml"
+      Parameters:
+        Cluster: !GetAtt Cluster.Outputs.ClusterName
+        Service: !GetAtt Service.Outputs.Service
+        GitHubUser: !Ref GitHubUser
+        GitHubToken: !Ref GitHubToken
+        GitHubRepo: !Ref GitHubRepo
+        GitHubBranch: !Ref GitHubBranch
+
+  LoadBalancer:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/load-balancer.yaml"
+      Parameters:
+        LaunchType: !Ref LaunchType
+        Subnets: "{{resolve:ssm:pathways-dev-vpc-subnets:1}}"
+        VpcId: "{{resolve:ssm:pathways-dev-vpc-id:1}}"
+
+  Service:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/service.yaml"
+      Parameters:
+        Cluster: !GetAtt Cluster.Outputs.ClusterName
+        LaunchType: !Ref LaunchType
+        TargetGroup: !GetAtt LoadBalancer.Outputs.TargetGroup
+        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
+        Subnets: "{{resolve:ssm:pathways-dev-vpc-subnets:1}}"
+
+
+Outputs:
+  ServiceUrl:
+    Description: The sample service that is being continuously deployed.
+    Value: !GetAtt LoadBalancer.Outputs.ServiceUrl
+
+  PipelineUrl:
+    Description: The continuous deployment pipeline in the AWS Management Console.
+    Value: !GetAtt DeploymentPipeline.Outputs.PipelineUrl

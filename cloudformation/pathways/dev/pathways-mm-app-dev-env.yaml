@@ -1,0 +1,47 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: This is a parent template for an application environment to implement all the AWS resources required i.e. ECS Cluster and associated Load Balancer.
+
+Parameters:
+  TemplateBucket:
+    Type: String
+    Description: The S3 bucket from which to fetch the templates used by this stack.
+
+  ClusterName:
+    Type: String  
+
+  LbName:  
+    Type: String
+
+  DBName:
+    Type: String
+
+Resources:
+  Cluster:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/ecs-cluster.yaml"
+      Parameters:
+        ClusterName: !Ref ClusterName
+        SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
+        Subnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
+        VpcId: { "Fn::ImportValue" : "pathways-dev-vpc-id" }
+
+  LoadBalancer:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/load-balancer.yaml"
+      Parameters:
+        Subnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
+        VpcId: { "Fn::ImportValue" : "pathways-dev-vpc-id" }
+
+  RDSInstance:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/rds.yaml"
+      Parameters:
+        DBName: !Ref DBName
+        VPCPrivateSubnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
+        VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-vpc-sec-grp" }
+
