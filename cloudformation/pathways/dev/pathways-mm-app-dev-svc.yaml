@@ -50,12 +50,12 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/codepipeline-pipeline.yaml"
       Parameters:
-        Cluster: "{{resolve:ssm:pathways-mm-app-dev-env-cluster:1}}"
+        Cluster: "pathways-mm-app-dev-env"
         Service: !GetAtt Service.Outputs.Service
-        CodeRepoUser: !Ref CodeRepoUser
-        CodeRepoToken: !Ref CodeRepoToken
         CodeRepo: !Ref CodeRepo
         CodeRepoBranch: !Ref CodeRepoBranch
+        #CodeRepoUser: !Ref CodeRepoUser
+        #CodeRepoToken: !Ref CodeRepoToken
 
   Service:
     Type: AWS::CloudFormation::Stack
@@ -63,11 +63,11 @@ Resources:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/service.yaml"
       Parameters:
         ServiceName: !Ref AWS::StackName
-        Cluster: "{{resolve:ssm:pathways-mm-app-dev-env-cluster:1}}"
+        Cluster: "pathways-mm-app-dev-env"
         LaunchType: EC2
-        TargetGroup: "{{resolve:ssm:pathways-mm-app-dev-env-lb-tgt-grp:1}}"
-        SourceSecurityGroup: "{{resolve:ssm:pathways-mm-app-dev-env-lb-sec-grp:1}}"
-        Subnets: "{{resolve:ssm:pathways-dev-vpc-subnets:1}}"
+        TargetGroup: { "Fn::ImportValue" : "pathways-mm-app-dev-env-lb-tgt-grp" }
+        SourceSecurityGroup: { "Fn::ImportValue" : "pathways-dev-vpc-sec-grp" }
+        Subnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
         
 
 Outputs:

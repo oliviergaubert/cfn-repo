@@ -2,10 +2,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
-  Name:
-    Type: String
-    Default: AWS::StackName
-
   Subnets:
     Type: List<AWS::EC2::Subnet::Id>
 
@@ -43,7 +39,6 @@ Resources:
 
   TargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
-    DependsOn: LoadBalancer
     Properties:
       VpcId: !Ref VpcId
       Port: 80
@@ -59,6 +54,7 @@ Resources:
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: 30
+    #DependsOn: LoadBalancer
 
   ListenerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
@@ -81,9 +77,9 @@ Outputs:
   SecurityGroup:
     Description: Load Balancer Security Group.
     Value: !Ref SecurityGroup 
-    Export: { "Name" : !Join ['', [!Ref Name, '-', 'lb-sec-grp']] }
+    Export: { "Name" : !Join ['', ['pathways-mm-app-dev-env', '-', 'lb-sec-grp']] }
 
   TargetGroup:
     Description: Load Balancer Target Group ARN.
     Value: !Ref TargetGroup 
-    Export: { "Name" : !Join ['', [!Ref Name, '-', 'lb-tgt-grp']] }
+    Export: { "Name" : !Join ['', ['pathways-mm-app-dev-env', '-', 'lb-tgt-grp']] }

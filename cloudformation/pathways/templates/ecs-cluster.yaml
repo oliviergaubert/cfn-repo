@@ -143,4 +143,4 @@ Outputs:
   ClusterName:
     Description: Cluster name for the application environment..
     Value: !Ref ClusterName
-    Export: { "Name" : !Join ['', [!Ref Name, '-', 'cluster']] }
+    #Export: { "Name" : !Join ['', [!Ref Name, '-', 'cluster']] }

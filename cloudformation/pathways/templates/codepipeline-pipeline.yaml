@@ -9,18 +9,18 @@ Parameters:
   CodeRepoBranch:
     Type: String
 
-  CodeRepoUser:
-    Type: String
-
-  CodeRepoToken:
-    Type: String
-    NoEcho: true
-
   Cluster:
     Type: String
 
   Service:
     Type: String
+
+  #CodeRepoUser:
+  #  Type: String
+
+  #CodeRepoToken:
+  #  Type: String
+  #  NoEcho: true
 
 Resources:
   Repository:
