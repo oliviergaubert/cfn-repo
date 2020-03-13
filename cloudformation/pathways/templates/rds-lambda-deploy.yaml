@@ -5,7 +5,7 @@ Description: Create role and lamdba funcation for RDS management
 Parameters:
   BucketName:
     Type: String
-    Default: unkown
+    Default: rdsmanager
 
   Environment:
     Type: String
@@ -72,11 +72,4 @@ Resources:
       VpcConfig:
         SecurityGroupIds: !Ref VPCSecurityGroup
         SubnetIds: !Ref VPCPrivateSubnets
-
-Outputs:
-  DBNameString:
-    Description: JDBC connection string for the database
-    Value:
-      !Join ['',['RDSManager', '-', !Ref Environment]]
-    Export: { "Name" : !Join ['', ['RDSManagerFunctionNameString', '-', !Ref Environment]]}
 

@@ -48,7 +48,7 @@ Resources:
   RDSLambdaDeploy:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/rds.yaml"
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/rds-lambda-deploy.yaml"
       Parameters:
         DBName: !Ref DBName
         VPCPrivateSubnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
