@@ -50,7 +50,6 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/rds-lambda-deploy.yaml"
       Parameters:
-        DBName: !Ref DBName
         VPCPrivateSubnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
         VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-vpc-sec-grp" }      
 
