@@ -70,6 +70,6 @@ Resources:
       Timeout: 60
       FunctionName: !Join ['',['RDSManager', '-', !Ref Environment]]
       VpcConfig:
-        SecurityGroupIds: !Ref VPCSecurityGroup
+        SecurityGroupIds: !Ref VPCSecurityGroups
         SubnetIds: !Ref VPCPrivateSubnets
 
