@@ -2,12 +2,8 @@
 
 set -o errexit -o xtrace
 
-bucket="pathways-devops-cf-templates"
-masterTemplate="pathways-mm-app-dev-svc"
+bucket="rdsmanager"
 
-zip deploy/templates.zip ${stackname}.yaml templates/*
-aws s3 cp deploy/templates.zip "s3://${bucket}" --acl public-read
-
-aws s3 cp --recursive templates "s3://${bucket}/templates" --acl public-read
+aws s3 cp "/home/alex.richardson/source/codecommit/rdsmanager/target/RDSManager-1.0-SNAPSHOT.jar" "s3://${bucket}" --acl public-read
 aws s3api put-bucket-versioning --bucket "${bucket}" --versioning-configuration Status=Enabled
 

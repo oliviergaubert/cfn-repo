@@ -65,7 +65,7 @@ Resources:
         Fn::GetAtt: [ LambdaExecutionRole, "Arn" ]
       Code:
         S3Bucket: !Ref BucketName
-        S3Key: rdsmanager.jar
+        S3Key: RDSManager-1.0-SNAPSHOT.jar
       Runtime: java11
       Timeout: 60
       FunctionName: !Join ['',['RDSManager', '-', !Ref Environment]]
