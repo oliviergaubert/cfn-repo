@@ -18,6 +18,10 @@ Parameters:
     Type: String
     Default: 10.215.20.0/24
 
+  Subnet3CIDR:
+    Type: String
+    Default: 10.215.30.0/24
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -39,6 +43,21 @@ Resources:
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
+
+  NATGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+         Fn::GetAtt:
+         - SubnetEIP
+         - AllocationId
+      SubnetId:
+         Ref: Subnet3
+
+  SubnetEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
 
   Subnet1:
     Type: AWS::EC2::Subnet
@@ -62,7 +81,26 @@ Resources:
         - Key: Name
           Value: !Sub ${Name} (Public)
 
+  Subnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      AvailabilityZone: !Select [ 1, !GetAZs ]
+      MapPublicIpOnLaunch: false
+      CidrBlock: !Ref Subnet3CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (Private)
+
   RouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Ref Name
+
+  PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
@@ -77,6 +115,13 @@ Resources:
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
 
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NATGateway
+
   Subnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
@@ -88,6 +133,12 @@ Resources:
     Properties:
       RouteTableId: !Ref RouteTable
       SubnetId: !Ref Subnet2
+
+  Subnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref Subnet3
 
   VpcCIDRSsmParameter:
     Type: AWS::SSM::Parameter
@@ -120,7 +171,15 @@ Resources:
         Environment: !Ref Name
 
 Outputs:
-  Subnets:
-    Value: !Join [ ",", [ !Ref Subnet1, !Ref Subnet2 ] ]
   VpcId:
     Value: !Ref VPC
+    Export: { "Name" : !Join ['', [!Ref Name, '-', 'id']] }
+  Subnets:
+    Value: !Join [ ",", [ !Ref Subnet1, !Ref Subnet2 ] ]
+    Export: { "Name" : !Join ['', [!Ref Name, '-', 'subnets']] }
+  VpcSecurityGroup:
+    Value: { "Fn::GetAtt" : ["VPC", "DefaultSecurityGroup"] } 
+    Export: { "Name" : !Join ['', [!Ref Name, '-', 'sec-grp']] }
+  #VpcCIDR:
+  #  Value: 
+  #  Export: 

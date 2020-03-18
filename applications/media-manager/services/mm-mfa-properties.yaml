@@ -1,0 +1,9 @@
+---
+
+service-name: "svc-name"
+service-code-repository: ${service-name}
+service-code-repository-branch: "develop" 
+service-codepipeline-name: ${service-name}
+service-discovery-name: ${service-name}
+
+application-group: "pathways-mm"

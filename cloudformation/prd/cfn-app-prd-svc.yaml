@@ -1,0 +1,81 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This is a parent template for an application service to implement all the AWS resources 
+  required to support buid, packaging and deployment into a dynamically generated application
+  service environment using an AWS ECS Cluster, Task Defintion and Service. In addition, an 
+  Application Load Balancer is created to support Service Discovery.
+
+
+Parameters:
+  LaunchType:
+    Type: String
+    Default: EC2
+    Description: >
+      The launch type for your service. Selecting EC2 will create an Auto
+      Scaling group of t2.micro instances for your cluster. 
+      See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/launch_types.html
+
+  CodeRepo:
+    Type: String
+    Description: The repo name of the sample service.
+
+  CodeRepoBranch:
+    Type: String
+    Description: The branch of the repo to continuously deploy.
+
+  TemplateBucket:
+    Type: String
+    Description: The S3 bucket from which to fetch the templates used by this stack.
+
+  NamespaceName:
+    Type: String
+
+  #CodeRepoUser:
+  #  Type: String
+  #  Description: Your code repository username.
+  #  Default: "{{resolve:secretsmanager:MediaManagerGitHubLogin:SecretString:username}}"
+
+  #CodeRepoToken:
+  #  Type: String
+  #  Description: OAuth code repository token for the user specified. (https://github.com/settings/tokens)
+  #  Default: "{{resolve:secretsmanager:MediaManagerGitHubLogin:SecretString:password}}"
+  #  NoEcho: true
+
+   
+Resources:
+  DeploymentPipeline:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/codepipeline-pipeline.yaml"
+      Parameters:
+        Cluster: "pathways-mm-app-dev-env"
+        Service: !GetAtt Service.Outputs.Service
+        CodeRepo: !Ref CodeRepo
+        CodeRepoBranch: !Ref CodeRepoBranch
+        #CodeRepoUser: !Ref CodeRepoUser
+        #CodeRepoToken: !Ref CodeRepoToken
+
+  Service:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/service.yaml"
+      Parameters:
+        ServiceName: !Ref AWS::StackName
+        Cluster: "pathways-mm-app-dev-env"
+        LaunchType: EC2
+        TargetGroup: { "Fn::ImportValue" : "pathways-mm-app-dev-env-lb-tgt-grp" }
+        SourceSecurityGroup: { "Fn::ImportValue" : "pathways-dev-vpc-sec-grp" }
+        Subnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
+        NamespaceId: { "Fn::ImportValue" : "pathways-dev-mm-app-svc-namespace" }
+
+Outputs:
+  PipelineUrl:
+    Description: The continuous deployment pipeline in the AWS Management Console.
+    Value: !GetAtt DeploymentPipeline.Outputs.PipelineUrl
+
+  #ServiceUrl:
+  #  Description: The sample service that is being continuously deployed.
+  #  Value: !GetAtt LoadBalancer.Outputs.ServiceUrl
+

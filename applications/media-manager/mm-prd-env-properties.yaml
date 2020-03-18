@@ -1,0 +1,4 @@
+---
+
+# application PROD environment settings
+environment: "prd"
