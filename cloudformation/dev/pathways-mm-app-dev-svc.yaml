@@ -68,7 +68,7 @@ Resources:
         TargetGroup: { "Fn::ImportValue" : "pathways-mm-app-dev-env-lb-tgt-grp" }
         SourceSecurityGroup: { "Fn::ImportValue" : "pathways-dev-vpc-sec-grp" }
         Subnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
-        
+        NamespaceId: { "Fn::ImportValue" : "pathways-dev-mm-app-svc-namespace" }
 
 Outputs:
   PipelineUrl:

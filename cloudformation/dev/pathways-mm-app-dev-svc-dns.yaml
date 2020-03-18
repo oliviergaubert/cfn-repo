@@ -17,16 +17,6 @@ Resources:
       Vpc: { "Fn::ImportValue" : "pathways-dev-vpc-id" }
       Name: !Ref NamespaceName
 
-  PrivDnsNsSsmParameter:
-    Type: AWS::SSM::Parameter
-    Properties:
-      Name: !Ref NamespaceName
-      Type: String
-      Value: !Ref PrivateDnsNamespace
-      Description: Creating an SSM parameter for Route53 Hosted Zone.
-      Tags:
-        Environment: !Ref NamespaceName
-
 Outputs:
   PrivateDnsNameSpace:
     Value: !Ref PrivateDnsNamespace

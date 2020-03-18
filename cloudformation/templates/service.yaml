@@ -27,6 +27,8 @@ Parameters:
   TargetGroup:
     Type: String
 
+  NamespaceId:
+    Type: String
 
 Resources:
   TaskExecutionRole:
@@ -117,7 +119,7 @@ Resources:
         DnsRecords:
           - Type: A
             TTL: 60
-      NamespaceId: "{{resolve:ssm:dev-mm-app-svc-a-disc:1}}"
+      NamespaceId: !Ref NamespaceId
       #HealthCheckConfig:
       #  FailureThreshold: 5
       #  ResourcePath: /
