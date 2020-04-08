@@ -12,14 +12,10 @@ Parameters:
   VPCLambdaSubnets:
     Description: Subnets which required RDS to be deployed
     Type: List<AWS::EC2::Subnet::Id>
-    ConstraintDescription: must contain only subnets.
-    Default: subnet-08fc8a114a3f546afe
 
   VPCSecurityGroups:
     Description: List of SecurityGroup for the VPC to refine database access
     Type: List<AWS::EC2::SecurityGroup::Id>
-    ConstraintDescription: must contain only list of VPC Security Groups.
-    Default: sg-089737eceb112f86d
 
 
 Resources:
@@ -64,8 +60,8 @@ Resources:
       Role:
         Fn::GetAtt: [ LambdaExecutionRole, "Arn" ]
       Code:
-        S3Bucket: !Join ['', [ !Ref TemplateBucket, '/', 'lambda']]
-        S3Key: RDSManager.jar
+        S3Bucket: !Ref TemplateBucket
+        S3Key: !Join ['', ['lambda', '/', 'RDSManager.jar']]
       Runtime: java11
       Timeout: 60
       FunctionName: !Join ['',['RDSManager', '-', !Ref Environment]]
