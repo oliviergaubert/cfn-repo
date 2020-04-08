@@ -1,0 +1,57 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Single node MongoDB deployment with a RAID10 storage configuration
+Parameters:
+
+  Environment:
+    Type: String
+    Default: DEV
+
+Resources:
+
+  MongoRootSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "mongo-root"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 50
+        ExcludeCharacters: '"@/\'
+        ExcludePunctuation: true
+      Tags:
+        - Key: env
+          Value: !Ref Environment
+
+  MongoAdminSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "mongo-admin"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 50
+        ExcludeCharacters: '"@/\'
+        ExcludePunctuation: true
+      Tags:
+        - Key: env
+          Value: !Ref Environment
+
+Outputs:
+  MongoRootSecretUsername:
+    Description: MongoRootSecret Value
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoRootSecret, ':SecretString:username}}' ]]
+    Export: { "Name" : !Join ['', ['MongoRootSecretUsername', '-', !Ref Environment]]}
+
+  MongoRootSecretPassword:
+    Description: MongoRootSecret Value
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoRootSecret, ':SecretString:password}}' ]]
+    Export: { "Name": !Join ['', ['MongoRootSecretPassword', '-', !Ref Environment]]}
+
+  MongoAdminSecretUsername:
+    Description: MongoRootSecret Value
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoAdminSecret, ':SecretString:username}}' ]]
+    Export: { "Name" : !Join ['', ['MongoAdminSecretUsername', '-', !Ref Environment]]}
+
+  MongoAdminSecretPassword:
+    Description: MongoRootSecret Value
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoAdminSecret, ':SecretString:password}}' ]]
+    Export: { "Name": !Join ['', ['MongoAdminSecretPassword', '-', !Ref Environment]]}

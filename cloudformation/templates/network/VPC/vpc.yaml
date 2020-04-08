@@ -1,0 +1,48 @@
+---
+  AWSTemplateFormatVersion: 2010-09-09
+
+  Parameters:
+    Name:
+      Type: String
+      Default: pathways-dev-vpc
+
+    VpcCIDR:
+      Type: String
+
+  Resources:
+    VPC:
+      Type: AWS::EC2::VPC
+      Properties:
+        CidrBlock: !Ref VpcCIDR
+
+    InternetGateway:
+      Type: AWS::EC2::InternetGateway
+
+    InternetGatewayAttachment:
+      Type: AWS::EC2::VPCGatewayAttachment
+      Properties:
+        InternetGatewayId: !Ref InternetGateway
+        VpcId: !Ref VPC
+
+    EgressInternetGateway:
+      Type: AWS::EC2::EgressOnlyInternetGateway
+      Properties:
+        VpcId: !Ref VPC
+
+  Outputs:
+
+    VpcId:
+      Value: !Ref VPC
+      Export: { "Name": !Join ['', [!Ref Name, '-', 'vpc-id']] }
+
+    VpcSecurityGroup:
+      Value: { "Fn::GetAtt": ["VPC", "DefaultSecurityGroup"] }
+      Export: { "Name": !Join ['', [!Ref Name, '-', 'sec-grp']] }
+
+    InternetGatewayId:
+      Value: !Ref InternetGateway
+      Export: { "Name": !Join ['', [!Ref Name, '-', 'igw-id']] }
+
+    EgressInternetGatewayId:
+      Value: !Ref EgressInternetGateway
+      Export: { "Name": !Join ['', [!Ref Name, '-', 'eigw-id']] }

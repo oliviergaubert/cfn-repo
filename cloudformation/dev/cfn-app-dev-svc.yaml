@@ -32,6 +32,9 @@ Parameters:
   NamespaceName:
     Type: String
 
+  Environment:
+    Type: String
+
   #CodeRepoUser:
   #  Type: String
   #  Description: Your code repository username.
@@ -49,6 +52,27 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/codepipeline-pipeline.yaml"
+      Tags:
+        - key: owner
+          value: nps
+        - key: environment
+          value: !Ref Environment
+        - key: capability
+          value: security
+        - key: components
+          value: iam
+        - key: source-code
+          value: na
+        - key: application
+          value: any
+        - key: service
+          value: compute
+        - key: is-production
+          value: no
+        - key: runbook-description-confluence-url
+          value: no
+        - key: infrastructure-support
+          value: devops
       Parameters:
         Cluster: "pathways-mm-app-dev-env"
         Service: !GetAtt Service.Outputs.Service
@@ -61,6 +85,27 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/service.yaml"
+      Tags:
+        - key: owner
+          value: nps
+        - key: environment
+          value: !Ref Environment
+        - key: capability
+          value: security
+        - key: components
+          value: iam
+        - key: source-code
+          value: na
+        - key: application
+          value: any
+        - key: service
+          value: compute
+        - key: is-production
+          value: no
+        - key: runbook-description-confluence-url
+          value: no
+        - key: infrastructure-support
+          value: devops
       Parameters:
         ServiceName: !Ref AWS::StackName
         Cluster: "pathways-mm-app-dev-env"

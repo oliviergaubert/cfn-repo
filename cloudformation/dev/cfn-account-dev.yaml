@@ -1,0 +1,38 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Creates management role for SSM
+
+Parameters:
+  TemplateBucket:
+    Type: String
+
+  Environment:
+    Type: String
+
+Resources:
+  Roles:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/IAM/ssm_role.yaml"
+      Tags:
+        - key: owner
+          value: nps
+        - key: environment
+          value: !Ref Environment
+        - key: capability
+          value: security
+        - key: components
+          value: iam
+        - key: source-code
+          value: na
+        - key: application
+          value: any
+        - key: service
+          value: compute
+        - key: is-production
+          value: no
+        - key: runbook-description-confluence-url
+          value: no
+        - key: infrastructure-support
+          value: devops

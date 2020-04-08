@@ -1,0 +1,57 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: This is a parent template for an application environment to implement all the AWS resources required for mongo.
+
+Parameters:
+  TemplateBucket:
+    Type: String
+
+  Environment:
+    Type: String
+    Default: DEV
+
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+Resources:
+
+  Accounts:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/mongo/mongodb_accounts.yaml"
+      Parameters:
+        Environment: !Ref Environment
+
+  MongoNode:
+    DependsOn:
+      - Accounts
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/mongo/mongodb_single_node.yaml"
+      Parameters:
+        RootValueUsername:
+          Fn::Sub:
+            - ${value1}
+            - value1: !GetAtt Accounts.Outputs.MongoRootSecretUsername
+        RootValuePassword:
+          Fn::Sub:
+            - ${value1}
+            - value1: !GetAtt Accounts.Outputs.MongoRootSecretPassword
+
+        AdminValueUsername:
+          Fn::Sub:
+            - ${value1}
+            - value1: !GetAtt Accounts.Outputs.MongoAdminSecretUsername
+
+        AdminValuePassword:
+          Fn::Sub:
+            - ${value1}
+            - value1: !GetAtt Accounts.Outputs.MongoAdminSecretPassword
+
+        VpcId: !Ref VpcId
+        SubnetId: !Ref SubnetId
+        Environment: !Ref Environment

@@ -1,0 +1,339 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Single node MongoDB deployment with a RAID10 storage configuration
+Parameters:
+
+  InstanceType:
+    Type: String
+    Default: m5.large
+
+  VolumeSize:
+    Description: Volume size for each EBS volume
+    Type: Number
+    Default: 100
+
+  SubnetId:
+    Type: AWS::EC2::Subnet::Id
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+  Environment:
+    Type: String
+
+  RootValueUsername:
+    Type: String
+
+  RootValuePassword:
+    Type: String
+
+  AdminValueUsername:
+    Type: String
+
+  AdminValuePassword:
+    Type: String
+
+Resources:
+
+  MongoRootSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "mongo-root"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 50
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: env
+          Value: !Ref Environment
+
+  MongoAdminSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "mongo-admin"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 50
+        ExcludeCharacters: '"@/\'
+      Tags:
+        - Key: env
+          Value: !Ref Environment
+
+  MongoSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: MongoDB security group
+      VpcId: !Ref VpcId
+
+  MongodIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId:
+        !GetAtt MongoSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: '27017'
+      ToPort: '27017'
+      SourceSecurityGroupId:
+        !Ref MongoSecurityGroup
+
+  StatusIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId:
+        !GetAtt MongoSecurityGroup.GroupId
+      IpProtocol: tcp
+      FromPort: '28017'
+      ToPort: '28017'
+      SourceSecurityGroupId:
+        !Ref MongoSecurityGroup
+
+  CfnUser:
+    Type: AWS::IAM::User
+    Properties:
+      Path: "/"
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: cloudformation:DescribeStackResource
+                Resource: "*"
+
+  HostKeys:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      UserName:
+        !Ref CfnUser
+
+  ENI:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      GroupSet:
+        - !GetAtt MongoSecurityGroup.GroupId
+      SubnetId: !Ref SubnetId
+
+  NetworkInterfaceAttachment:
+    Type: AWS::EC2::NetworkInterfaceAttachment
+    Properties:
+      InstanceId:
+        Ref: EC2Instance
+      NetworkInterfaceId:
+        Ref: ENI
+      DeviceIndex: 1
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        configSets:
+          ascending:
+            - 'awsSetup'
+            - 'preSetup'
+            - 'install'
+            - 'accountSetup'
+        awsSetup:
+          commands:
+            0_tmp:
+              command: cd /tmp
+            1_update:
+              command: sudo yum -y update
+            2_upgrade:
+              command: sudo yum -y upgrade
+            3_update_bootstrap:
+              command: sudo yum -y update aws-cfn-bootstrap
+            4_download_inspector-agent:
+              command: cd /tmp && curl -O https://inspector-agent.amazonaws.com/linux/latest/install
+            5_install_inspector-agent:
+              command: cd /tmp && sudo bash install
+            6_remove_inspector-agent_install_file:
+              command: rm /tmp/install
+        preSetup:
+          commands:
+            1_pvcreate:
+              command: sudo pvcreate /dev/sdf
+            2_vgcreate:
+              command: sudo vgcreate vg0 /dev/sdf
+            3_lvcreate:
+              command: sudo lvcreate -l 100%FREE -n data vg0
+            4_mkfs:
+              command: sudo mkfs.ext4 /dev/vg0/data
+            5_mkdir:
+              command: sudo mkdir /data
+            6_fstab:
+              command: sudo echo "/dev/mapper/vg0-data /data ext4 defaults 0 2" >> /etc/fstab
+            7_mount:
+              command: sudo mount -a
+        install:
+          config:
+            packages:
+              yum:
+                mdadm: []
+                sysstat: []
+          files:
+            "/etc/yum.repos.d/mongodb-org-4.2.repo":
+              content:
+                Fn::Join:
+                  - ''
+                  - - '[mongodb-org-4.2]'
+                    - "\nname=MongoDB Repository"
+                    - "\nbaseurl=https://repo.mongodb.org/yum/amazon/2/mongodb-org/4.2/x86_64/"
+                    - "\ngpgcheck=1"
+                    - "\nenabled=1"
+                    - "\ngpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc"
+              mode: '000644'
+              owner: root
+              group: root
+            "/etc/mongod.conf":
+              content:
+                Fn::Join:
+                  - ''
+                  - - 'storage:'
+                    - "\n  dbPath: /data/mongodb"
+                    - "\n  engine: wiredTiger"
+                    - "\n  journal:"
+                    - "\n    enabled: true"
+                    - "\nsystemLog:"
+                    - "\n  destination: file"
+                    - "\n  logAppend: true"
+                    - "\n  path: /var/log/mongodb/mongod.log \n"
+                    - 'net:'
+                    - "\n  port: 27017"
+                    - "\n  bindIp: 0.0.0.0 \n"
+                    - 'processManagement:'
+                    - "\n  timeZoneInfo: /usr/share/zoneinfo \n"
+                    - 'security:'
+                    - "\n  authorization: disabled"
+              mode: '000644'
+              owner: root
+              group: root
+            "/tmp/mongod.service":
+              content:
+                Fn::Join:
+                  - ''
+                  - - '[Unit]'
+                    - "\nDescription=High-performance, schema-free document-oriented >database"
+                    - "\nAfter=network.target\n"
+                    - "\n[Service]"
+                    - "\nUser=mongod"
+                    - "\nExecStart=/usr/bin/mongod --quiet --config /etc/mongod.conf"
+                    - "\nLimitFSIZE=infinity"
+                    - "\nLimitCPU=infinity"
+                    - "\nLimitAS=infinity"
+                    - "\nLimitNOFILE=64000"
+                    - "\nLimitNPROC=64000"
+                    - "\nLimitMEMLOCK=infinity"
+                    - "\nTasksMax=infinity"
+                    - "\nTasksAccounting=false\n"
+                    - "\n[Install]"
+                    - "\nWantedBy=multi-user.target"
+              mode: '000644'
+              owner: root
+              group: root
+          commands:
+            0_install_libc:
+              command: sudo yum install -y libc.so.6
+            1_install_mongodb:
+              command: sudo yum install -y mongodb-org
+            2_start_mongodb:
+              command: sudo service mongod stop
+            3_chkconfig_on:
+              command: sudo chkconfig mongod on
+            4_move_data:
+              command: sudo mv var/run/mongodb /data/
+            5_set_user_dir:
+              command: sudo chown mongod:mongod  -R /data
+            6_mv_config:
+              command: sudo mv /tmp/mongod.service /usr/lib/systemd/system/
+            7_reload_systemctl:
+              command: sudo systemctl daemon-reload
+            8_start_mongo:
+              command: sudo service mongod start
+        accountSetup:
+          files:
+            "/tmp/mongod-accounts.json":
+              content:
+                Fn::Join:
+                  - ''
+                  - - 'use admin'
+                    - "\ndb.createUser({user: '"
+                    - !Ref RootValueUsername
+                    - "', pwd: '"
+                    - !Ref RootValuePassword
+                    - "', roles: [ { role: 'userAdminAnyDatabase', db: 'admin' } ]});"
+                    - "\ndb.createUser({user: '"
+                    - !Ref AdminValueUsername
+                    - "', pwd: '"
+                    - !Ref AdminValuePassword
+                    - "', roles: [ { role: 'userAdminAnyDatabase', db: 'admin' } ]});"
+              mode: '000644'
+              owner: root
+              group: root
+          commands:
+            0_wait_10:
+              command: sleep 10
+            1_create_accounts:
+              command: sudo mongo < /tmp/mongod-accounts.json
+            2_update_mongo_conf:
+              command: sed -i 's/disabled/enabled/g' /etc/mongod.conf
+            3_restart_mongo:
+              command: sudo service mongod restart
+            4_remove_tmp_files:
+              command: sudo rm /tmp/mongod-accounts.json
+    Properties:
+      BlockDeviceMappings:
+        # Create a separate volume
+        - DeviceName: /dev/sdf
+          Ebs:
+            DeleteOnTermination: false
+            VolumeSize: !Ref VolumeSize
+        - DeviceName: /dev/xvda
+          Ebs:
+            DeleteOnTermination: true
+            VolumeSize: !Ref VolumeSize
+
+      SubnetId: !Ref SubnetId
+      Monitoring: true
+      KeyName: DevOps
+      InstanceType:
+        !Ref InstanceType
+      ImageId: ami-0cb790308f7591fa6
+      IamInstanceProfile: EC2AccessSSM
+      SecurityGroupIds:
+        - !Ref MongoSecurityGroup
+
+      UserData: !Base64
+        'Fn::Join':
+          - ''
+          - - |
+              #!/bin/bash -x
+            - |
+              # Install the files and packages from the metadata
+            - '/opt/aws/bin/cfn-init -c ascending '
+            - '         --stack '
+            - !Ref 'AWS::StackName'
+            - '         --resource EC2Instance '
+            - '         --region '
+            - !Ref 'AWS::Region'
+            - |+
+
+            - |
+              # Signal the status from cfn-init
+            - '/opt/aws/bin/cfn-signal -e $? '
+            - '         --stack '
+            - !Ref 'AWS::StackName'
+            - '         --resource EC2Instance '
+            - '         --region '
+            - !Ref 'AWS::Region'
+            - |+
+
+    CreationPolicy:
+      ResourceSignal:
+        Timeout: PT5M
+
+Outputs:
+  InstanceName:
+    Value:
+      Fn::GetAtt:
+        - EC2Instance
+        - PublicDnsName
+    Description: public DNS name of the new MongoInstance

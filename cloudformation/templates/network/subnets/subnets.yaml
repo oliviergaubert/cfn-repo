@@ -1,0 +1,419 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  Name:
+    Type: String
+    Default: pathways-dev-vpc
+
+  VpcId:
+    Type: String
+
+  InternetGatewayId:
+    Type: String
+
+  EgressInternetGatewayId:
+    Type: String
+
+  DMZSubnet1CIDR:
+    Type: String
+
+  DMZSubnet2CIDR:
+    Type: String
+
+  ECSSubnet1CIDR:
+    Type: String
+
+  ECSSubnet2CIDR:
+    Type: String
+
+  ECSSubnet3CIDR:
+    Type: String
+
+  ServicesSubnet1CIDR:
+    Type: String
+
+  ServicesSubnet2CIDR:
+    Type: String
+
+  ServicesSubnet3CIDR:
+    Type: String
+
+  RDSSubnet1CIDR:
+    Type: String
+
+  RDSSubnet2CIDR:
+    Type: String
+
+  RDSSubnet3CIDR:
+    Type: String
+
+  MongoSubnet1CIDR:
+    Type: String
+
+  MongoSubnet2CIDR:
+    Type: String
+
+  MongoSubnet3CIDR:
+    Type: String
+
+Resources:
+
+  DMZSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref DMZSubnet1CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (DMZ)
+
+  DMZSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref DMZSubnet1
+
+  DMZSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref DMZSubnet2CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (DMZ)
+
+  DMZSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref DMZSubnet2
+
+  ECSSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref ECSSubnet1CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (ECS)
+
+  ECSSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref ECSSubnet1
+
+  ECSSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref ECSSubnet2CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (ECS)
+
+  ECSSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref ECSSubnet2
+
+  ECSSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 2
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref ECSSubnet3CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (ECS)
+
+  ECSSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref ECSSubnet3
+
+  ServicesSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: false
+      CidrBlock: !Ref ServicesSubnet1CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (Services)
+
+  ServicesSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref ServicesSubnet1
+
+  ServicesSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: false
+      CidrBlock: !Ref ServicesSubnet2CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (Services)
+
+  ServicesSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref ServicesSubnet2
+
+  ServicesSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 2
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: false
+      CidrBlock: !Ref ServicesSubnet3CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (Services)
+
+  ServicesSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref ServicesSubnet3
+
+  RDSSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: false
+      CidrBlock: !Ref RDSSubnet1CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (RDS)
+
+  RDSSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref RDSSubnet1
+
+  RDSSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: false
+      CidrBlock: !Ref RDSSubnet2CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (RDS)
+
+  RDSSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref RDSSubnet2
+
+  RDSSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 2
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: false
+      CidrBlock: !Ref RDSSubnet3CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (RDS)
+
+  RDSSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref RDSSubnet3
+
+  MongoSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref MongoSubnet1CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (Mongo)
+
+  MongoSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref MongoSubnet1
+
+  MongoSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 1
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref MongoSubnet2CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (Mongo)
+
+  MongoSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref MongoSubnet2
+
+  MongoSubnet3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VpcId
+      AvailabilityZone: !Select
+        - 2
+        - !GetAZs
+          Ref: 'AWS::Region'
+      MapPublicIpOnLaunch: true
+      CidrBlock: !Ref MongoSubnet3CIDR
+      Tags:
+        - Key: Name
+          Value: !Sub ${Name} (Mongo)
+
+  MongoSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      SubnetId: !Ref MongoSubnet3
+
+#  NAT1SubnetEIP:
+#    Type: AWS::EC2::EIP
+#    Properties:
+#      Domain: vpc
+#
+#  NAT2SubnetEIP:
+#    Type: AWS::EC2::EIP
+#    Properties:
+#      Domain: vpc
+#
+#  NATGateway1:
+#    Type: AWS::EC2::NatGateway
+#    Properties:
+#      AllocationId:
+#        Fn::GetAtt:
+#          - NAT1SubnetEIP
+#          - AllocationId
+#      SubnetId:
+#        Ref: MongoSubnet1
+#
+#  NATGateway2:
+#    Type: AWS::EC2::NatGateway
+#    Properties:
+#      AllocationId:
+#        Fn::GetAtt:
+#          - NAT2SubnetEIP
+#          - AllocationId
+#      SubnetId:
+#        Ref: MongoSubnet2
+
+  MainRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: !Ref Name
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcId
+      Tags:
+        - Key: Name
+          Value: !Ref Name
+
+  DefaultRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref MainRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayId
+
+Outputs:
+
+  DMZSubnets:
+    Value: !Join [ ",", [ !Ref DMZSubnet1, !Ref DMZSubnet2 ] ]
+    Export: { "Name": !Join ['', [!Ref Name, '-', 'dmz-subnets']] }
+
+  ECSSubnets:
+    Value: !Join [ ",", [ !Ref ECSSubnet1, !Ref ECSSubnet2, !Ref ECSSubnet3 ] ]
+    Export: { "Name": !Join ['', [!Ref Name, '-', 'ecs-subnets']] }
+
+  ServicesSubnets:
+    Value: !Join [ ",", [ !Ref ServicesSubnet1, !Ref ServicesSubnet2, !Ref ServicesSubnet3 ] ]
+    Export: { "Name": !Join ['', [!Ref Name, '-', 'services-subnets']] }
+
+  RDSSubnets:
+    Value: !Join [ ",", [ !Ref RDSSubnet1, !Ref RDSSubnet2 ] ]
+    Export: { "Name": !Join ['', [!Ref Name, '-', 'rds-subnets']] }
+
+  LambdaSubnets:
+    Value: !Join [ ",", [ !Ref RDSSubnet1, !Ref RDSSubnet2, !Ref ServicesSubnet1, !Ref ServicesSubnet2 ] ]
+    Export: { "Name": !Join ['', [!Ref Name, '-', 'lambda-subnets']] }
+
+  MongoSubnets:
+    Value: !Join [ ",", [ !Ref MongoSubnet1, !Ref MongoSubnet2, !Ref MongoSubnet3 ] ]
+    Export: { "Name": !Join ['', [!Ref Name, '-', 'mongo-subnets']] }

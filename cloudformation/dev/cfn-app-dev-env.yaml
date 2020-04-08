@@ -17,39 +17,161 @@ Parameters:
   DBName:
     Type: String
 
+  Environment:
+    Type: String
+
 Resources:
   Cluster:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/ecs-cluster.yaml"
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/ECS/ecs-cluster.yaml"
+      Tags:
+        - Key: owner
+          Value: nps
+        - Key: environment
+          Value: !Ref Environment
+        - Key: capability
+          Value: security
+        - Key: components
+          Value: iam
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
       Parameters:
         ClusterName: !Ref ClusterName
         SourceSecurityGroup: !GetAtt LoadBalancer.Outputs.SecurityGroup
-        Subnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
-        VpcId: { "Fn::ImportValue" : "pathways-dev-vpc-id" }
+        Subnets: { "Fn::ImportValue" : "pathways-dev-net-ecs-subnets" }
+        VpcId: { "Fn::ImportValue" : "pathways-dev-net-vpc-id" }
 
   LoadBalancer:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/load-balancer.yaml"
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/ALB/load-balancer.yaml"
+      Tags:
+        - Key: owner
+          Value: nps
+        - Key: environment
+          Value: !Ref Environment
+        - Key: capability
+          Value: security
+        - Key: components
+          Value: iam
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
       Parameters:
-        Subnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
-        VpcId: { "Fn::ImportValue" : "pathways-dev-vpc-id" }
+        Subnets: { "Fn::ImportValue" : "pathways-dev-net-ecs-subnets" }
+        VpcId: { "Fn::ImportValue" : "pathways-dev-net-vpc-id" }
 
   RDSInstance:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/rds.yaml"
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/postgres/rds.yaml"
+      Tags:
+        - Key: owner
+          Value: nps
+        - Key: environment
+          Value: !Ref Environment
+        - Key: capability
+          Value: security
+        - Key: components
+          Value: iam
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
       Parameters:
         DBName: !Ref DBName
-        VPCPrivateSubnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
-        VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-vpc-sec-grp" }
+        VPCPrivateSubnets: { "Fn::ImportValue" : "pathways-dev-net-rds-subnets" }
+        VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-net-sec-grp" }
 
   RDSLambdaDeploy:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/rds-lambda-deploy.yaml"
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/postgres/rds-lambda-deploy.yaml"
+      Tags:
+        - Key: owner
+          Value: nps
+        - Key: environment
+          Value: !Ref Environment
+        - Key: capability
+          Value: security
+        - Key: components
+          Value: iam
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
       Parameters:
-        VPCPrivateSubnets: { "Fn::ImportValue" : "pathways-dev-vpc-subnets" }
-        VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-vpc-sec-grp" }      
+        VPCLambdaSubnets: { "Fn::ImportValue" : "pathways-dev-net-lambda-subnets" }
+        VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-net-sec-grp" }
+        Environment: !Ref Environment
+        TemplateBucket: !Ref TemplateBucket
+
+
+  MongoDB:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/mongo/mongo.yaml"
+      Tags:
+        - Key: owner
+          Value: nps
+        - Key: environment
+          Value: !Ref Environment
+        - Key: capability
+          Value: security
+        - Key: components
+          Value: iam
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
+      Parameters:
+        Environment: !Ref Environment
+        SubnetId: !Select [0, !Split [",", !ImportValue pathways-dev-net-mongo-subnets]]
+        VpcId: { "Fn::ImportValue" : "pathways-dev-net-vpc-id" }
+        TemplateBucket: !Ref TemplateBucket
+        
 
