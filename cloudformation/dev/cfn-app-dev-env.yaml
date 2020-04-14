@@ -17,7 +17,7 @@ Parameters:
   DBName:
     Type: String
 
-  Environment:
+  EnvironmentInstance:
     Type: String
 
 Resources:
@@ -28,12 +28,12 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
-          Value: security
+          Value: container
         - Key: components
-          Value: iam
+          Value: ecs
         - Key: source-code
           Value: na
         - Key: application
@@ -59,12 +59,12 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
-          Value: security
+          Value: network
         - Key: components
-          Value: iam
+          Value: alb
         - Key: source-code
           Value: na
         - Key: application
@@ -88,12 +88,12 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
-          Value: security
+          Value: database
         - Key: components
-          Value: iam
+          Value: rds
         - Key: source-code
           Value: na
         - Key: application
@@ -110,6 +110,7 @@ Resources:
         DBName: !Ref DBName
         VPCPrivateSubnets: { "Fn::ImportValue" : "pathways-dev-net-rds-subnets" }
         VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-net-sec-grp" }
+        EnvironmentInstance: !Ref EnvironmentInstance
 
   RDSLambdaDeploy:
     Type: AWS::CloudFormation::Stack
@@ -118,12 +119,12 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
-          Value: security
+          Value: rds-lambda
         - Key: components
-          Value: iam
+          Value: database
         - Key: source-code
           Value: na
         - Key: application
@@ -139,7 +140,7 @@ Resources:
       Parameters:
         VPCLambdaSubnets: { "Fn::ImportValue" : "pathways-dev-net-lambda-subnets" }
         VPCSecurityGroups: { "Fn::ImportValue" : "pathways-dev-net-sec-grp" }
-        Environment: !Ref Environment
+        EnvironmentInstance: !Ref EnvironmentInstance
         TemplateBucket: !Ref TemplateBucket
 
 
@@ -150,12 +151,12 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
-          Value: security
+          Value: nosql-database
         - Key: components
-          Value: iam
+          Value: ec2
         - Key: source-code
           Value: na
         - Key: application
@@ -169,7 +170,7 @@ Resources:
         - Key: infrastructure-support
           Value: devops
       Parameters:
-        Environment: !Ref Environment
+        EnvironmentInstance: !Ref EnvironmentInstance
         SubnetId: !Select [0, !Split [",", !ImportValue pathways-dev-net-mongo-subnets]]
         VpcId: { "Fn::ImportValue" : "pathways-dev-net-vpc-id" }
         TemplateBucket: !Ref TemplateBucket

@@ -1,4 +1,4 @@
 ---
 
 # application DEV environment settings
-environment: "dev"
+EnvironmentInstance: "dev"

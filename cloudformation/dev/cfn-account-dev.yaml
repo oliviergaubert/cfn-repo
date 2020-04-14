@@ -7,7 +7,7 @@ Parameters:
   TemplateBucket:
     Type: String
 
-  Environment:
+  EnvironmentInstance:
     Type: String
 
 Resources:
@@ -18,8 +18,8 @@ Resources:
       Tags:
         - key: owner
           value: nps
-        - key: environment
-          value: !Ref Environment
+        - key: EnvironmentInstance
+          value: !Ref EnvironmentInstance
         - key: capability
           value: security
         - key: components

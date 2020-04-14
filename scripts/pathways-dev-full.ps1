@@ -48,7 +48,7 @@ aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFIL
 Write-Output 'Delete completed'
 
 Write-Output 'Creating the stack...'
-aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $NETStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_NET --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=Environment,ParameterValue=$AppEnv ParameterKey=StackName,ParameterValue=$NETStackName ParameterKey=VpcCIDR,ParameterValue=$VpcCIDR ParameterKey=DMZSubnet1CIDR,ParameterValue=$DMZSubnet1CIDR ParameterKey=DMZSubnet2CIDR,ParameterValue=$DMZSubnet2CIDR  ParameterKey=ECSSubnet1CIDR,ParameterValue=$ECSSubnet1CIDR ParameterKey=ECSSubnet2CIDR,ParameterValue=$ECSSubnet2CIDR ParameterKey=ECSSubnet3CIDR,ParameterValue=$ECSSubnet3CIDR ParameterKey=ServicesSubnet1CIDR,ParameterValue=$ServicesSubnet1CIDR ParameterKey=ServicesSubnet2CIDR,ParameterValue=$ServicesSubnet2CIDR ParameterKey=ServicesSubnet3CIDR,ParameterValue=$ServicesSubnet3CIDR ParameterKey=RDSSubnet1CIDR,ParameterValue=$RDSSubnet1CIDR ParameterKey=RDSSubnet2CIDR,ParameterValue=$RDSSubnet2CIDR ParameterKey=RDSSubnet3CIDR,ParameterValue=$RDSSubnet3CIDR ParameterKey=MongoSubnet1CIDR,ParameterValue=$MongoSubnet1CIDR ParameterKey=MongoSubnet2CIDR,ParameterValue=$MongoSubnet2CIDR ParameterKey=MongoSubnet3CIDR,ParameterValue=$MongoSubnet3CIDR ParameterKey=NamespaceName,ParameterValue=$NamespaceName
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $NETStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_NET --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv ParameterKey=StackName,ParameterValue=$NETStackName ParameterKey=VpcCIDR,ParameterValue=$VpcCIDR ParameterKey=DMZSubnet1CIDR,ParameterValue=$DMZSubnet1CIDR ParameterKey=DMZSubnet2CIDR,ParameterValue=$DMZSubnet2CIDR  ParameterKey=ECSSubnet1CIDR,ParameterValue=$ECSSubnet1CIDR ParameterKey=ECSSubnet2CIDR,ParameterValue=$ECSSubnet2CIDR ParameterKey=ECSSubnet3CIDR,ParameterValue=$ECSSubnet3CIDR ParameterKey=ServicesSubnet1CIDR,ParameterValue=$ServicesSubnet1CIDR ParameterKey=ServicesSubnet2CIDR,ParameterValue=$ServicesSubnet2CIDR ParameterKey=ServicesSubnet3CIDR,ParameterValue=$ServicesSubnet3CIDR ParameterKey=RDSSubnet1CIDR,ParameterValue=$RDSSubnet1CIDR ParameterKey=RDSSubnet2CIDR,ParameterValue=$RDSSubnet2CIDR ParameterKey=RDSSubnet3CIDR,ParameterValue=$RDSSubnet3CIDR ParameterKey=MongoSubnet1CIDR,ParameterValue=$MongoSubnet1CIDR ParameterKey=MongoSubnet2CIDR,ParameterValue=$MongoSubnet2CIDR ParameterKey=MongoSubnet3CIDR,ParameterValue=$MongoSubnet3CIDR ParameterKey=NamespaceName,ParameterValue=$NamespaceName
 Write-Output 'Awaiting completion of the following stacking: ' $NETStackName
 aws cloudformation wait stack-create-complete --stack-name $NETStackName --region $REGION --profile $PROFILE
 Write-Output 'Stacked completed'
@@ -75,7 +75,7 @@ aws cloudformation wait stack-create-complete --stack-name $AccountStackName --r
 
 ##################################################################################################
 
-###################################### Environment Creatiom ######################################
+###################################### Environment Creation ######################################
 
 aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_ENV s3://$S3_BUCKET --region $REGION --profile $PROFILE
 
@@ -89,7 +89,7 @@ Write-Output 'Validating template...'
 aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$EnvStackName.yaml
 
 Write-Output 'Creating stack...'
-aws cloudformation create-stack --region $REGION --profile i2n-engineering --stack-name $EnvStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ENV --parameters ParameterKey=DBName,ParameterValue=$DBName ParameterKey=ClusterName,ParameterValue=$EnvStackName ParameterKey=LbName,ParameterValue=$EnvStackName ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=Environment,ParameterValue=$AppEnv --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --region $REGION --profile i2n-engineering --stack-name $EnvStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ENV --parameters ParameterKey=DBName,ParameterValue=$DBName ParameterKey=ClusterName,ParameterValue=$EnvStackName ParameterKey=LbName,ParameterValue=$EnvStackName ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv --capabilities CAPABILITY_NAMED_IAM
 Write-Output 'Awaiting completion of the following stacking: ' $EnvStackName
 aws cloudformation describe-stack-events --stack-name $EnvStackName --region $REGION --profile $PROFILE
 aws cloudformation wait stack-create-complete --stack-name $EnvStackName --region $REGION --profile $PROFILE

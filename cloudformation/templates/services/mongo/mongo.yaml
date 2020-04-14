@@ -7,7 +7,7 @@ Parameters:
   TemplateBucket:
     Type: String
 
-  Environment:
+  EnvironmentInstance:
     Type: String
     Default: DEV
 
@@ -24,7 +24,7 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/mongo/mongodb_accounts.yaml"
       Parameters:
-        Environment: !Ref Environment
+        EnvironmentInstance: !Ref EnvironmentInstance
 
   MongoNode:
     DependsOn:
@@ -52,6 +52,16 @@ Resources:
             - ${value1}
             - value1: !GetAtt Accounts.Outputs.MongoAdminSecretPassword
 
+        ApplicationValueUsername:
+          Fn::Sub:
+            - ${value1}
+            - value1: !GetAtt Accounts.Outputs.MongoApplicationSecretUsername
+
+        ApplicationValuePassword:
+          Fn::Sub:
+            - ${value1}
+            - value1: !GetAtt Accounts.Outputs.MongoApplicationSecretPassword
+
         VpcId: !Ref VpcId
         SubnetId: !Ref SubnetId
-        Environment: !Ref Environment
+        EnvironmentInstance: !Ref EnvironmentInstance

@@ -8,7 +8,7 @@ Parameters:
     Type: String
     Description: The S3 bucket from which to fetch the templates used by this stack.
 
-  Environment:
+  EnvironmentInstance:
     Type: String
 
   StackName:
@@ -71,8 +71,8 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
           Value: network
         - Key: components
@@ -100,8 +100,8 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
           Value: network
         - Key: components
@@ -145,8 +145,8 @@ Resources:
       Tags:
         - Key: owner
           Value: nps
-        - Key: environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
         - Key: capability
           Value: network
         - Key: components

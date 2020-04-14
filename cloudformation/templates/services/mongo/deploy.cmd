@@ -9,5 +9,5 @@ aws cloudformation wait stack-delete-complete --region eu-west-2 --profile i2n-e
 echo 'Done'
 
 aws cloudformation validate-template --template-url https://aws-cloud-formation-repo-engineering.s3.eu-west-2.amazonaws.com/mongo.yaml
-aws cloudformation create-stack --region eu-west-2 --profile i2n-engineering --stack-name testing-DEV --template-url https://aws-cloud-formation-repo-engineering.s3.eu-west-2.amazonaws.com/mongo.yaml --parameters ParameterKey=TemplateBucket,ParameterValue=aws-cloud-formation-repo-engineering ParameterKey=Environment,ParameterValue=DEV --capabilities CAPABILITY_NAMED_IAM --disable-rollback
+aws cloudformation create-stack --region eu-west-2 --profile i2n-engineering --stack-name testing-DEV --template-url https://aws-cloud-formation-repo-engineering.s3.eu-west-2.amazonaws.com/mongo.yaml --parameters ParameterKey=TemplateBucket,ParameterValue=aws-cloud-formation-repo-engineering ParameterKey=EnvironmentInstance,ParameterValue=DEV --capabilities CAPABILITY_NAMED_IAM --disable-rollback
 aws cloudformation describe-stack-events --stack-name testing-DEV --region eu-west-2 --profile i2n-engineering

@@ -1,12 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Create role and lamdba funcation for RDS management
+Description: Create role and lambda funcation for RDS management
 
 Parameters:
   TemplateBucket:
     Type: String
 
-  Environment:
+  EnvironmentInstance:
     Type: String
 
   VPCLambdaSubnets:
@@ -64,7 +64,7 @@ Resources:
         S3Key: !Join ['', ['lambda', '/', 'RDSManager.jar']]
       Runtime: java11
       Timeout: 60
-      FunctionName: !Join ['',['RDSManager', '-', !Ref Environment]]
+      FunctionName: !Join ['',['RDSManager', '-', !Ref EnvironmentInstance]]
       VpcConfig:
         SecurityGroupIds: !Ref VPCSecurityGroups
         SubnetIds: !Ref VPCLambdaSubnets

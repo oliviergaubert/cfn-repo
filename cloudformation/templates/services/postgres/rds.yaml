@@ -28,23 +28,76 @@ Parameters:
     Type: List<AWS::EC2::SecurityGroup::Id>
     ConstraintDescription: must contain only list of VPC Security Groups.
 
-  Environment:
+  EnvironmentInstance:
     Type: String
     Default: DEV
 
 Resources:
-  RDSSecret:
+  RDSRootSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
       Description: 'RDS encrypted credential; randomly generated JSON.'
       GenerateSecretString:
-        SecretStringTemplate: '{"username": "postgres"}'
-        GenerateStringKey: 'password'
-        PasswordLength: 50
-        ExcludeCharacters: '"@/\'
-      Tags:
-        - Key: env
-          Value: !Ref Environment
+      SecretStringTemplate: '{"username": "postgres"}'
+      GenerateStringKey: 'password'
+      PasswordLength: 50
+      Name:
+        'Fn::Join':
+          - ''
+          - - 'rdsRootAccount'
+            - 'Fn::Transform':
+                Name: Cap
+                Parameters:
+                  InputString: !Ref EnvironmentInstance
+                  Operation: Capitalize
+      ExcludeCharacters: '"@/\'
+    Tags:
+      - Key: env
+        Value: !Ref EnvironmentInstance
+
+  RDSlambdaSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: 'RDS encrypted credential; randomly generated JSON.'
+      GenerateSecretString:
+      SecretStringTemplate: '{"username": "postgres"}'
+      GenerateStringKey: 'password'
+      PasswordLength: 50
+      Name:
+        'Fn::Join':
+          - ''
+          - - 'rdslambdaAccount'
+            - 'Fn::Transform':
+                Name: Cap
+                Parameters:
+                  InputString: !Ref EnvironmentInstance
+                  Operation: Capitalize
+      ExcludeCharacters: '"@/\'
+    Tags:
+      - Key: env
+        Value: !Ref EnvironmentInstance
+
+  RDSApplicationSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: 'RDS encrypted credential; randomly generated JSON.'
+      GenerateSecretString:
+      SecretStringTemplate: '{"username": "postgres"}'
+      GenerateStringKey: 'password'
+      PasswordLength: 50
+      Name:
+        'Fn::Join':
+          - ''
+          - - 'rdsApplicationAccount'
+            - 'Fn::Transform':
+                Name: Cap
+                Parameters:
+                  InputString: !Ref EnvironmentInstance
+                  Operation: Capitalize
+      ExcludeCharacters: '"@/\'
+    Tags:
+      - Key: env
+        Value: !Ref EnvironmentInstance
 
   DEVDBSubnet:
     Type: AWS::RDS::DBSubnetGroup
@@ -53,8 +106,8 @@ Resources:
       DBSubnetGroupName: RDSSubnetGroup
       SubnetIds: !Ref VPCPrivateSubnets
       Tags:
-        - Key: Environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
 
   DEVDB:
     Type: AWS::RDS::DBInstance
@@ -73,8 +126,8 @@ Resources:
       EnablePerformanceInsights: true
       Engine: Postgres
       EngineVersion: 11
-      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSSecret, ':SecretString:username}}' ]]
-      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSSecret, ':SecretString:password}}' ]]
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSRootSecret, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref RDSRootSecret, ':SecretString:password}}' ]]
       MultiAZ: false
       DBSubnetGroupName: !Ref DEVDBSubnet
       OptionGroupName: default:postgres-11
@@ -83,18 +136,18 @@ Resources:
       StorageEncrypted: true
       StorageType: standard
       Tags:
-        - Key: Environment
-          Value: !Ref Environment
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
       VPCSecurityGroups: !Ref VPCSecurityGroups
 
 Outputs:
   JDBCConnectionString:
     Description: JDBC connection string for the database
-    Value: !Join ['', ['jdbc:postgresql://', !GetAtt [DEVDB, Endpoint.Address], ':', !GetAtt [
+    Value: !Join ['', [      'jdbc:postgresql://', !GetAtt [DEVDB, Endpoint.Address], ':', !GetAtt [
       DEVDB, Endpoint.Port], /, !Ref 'DBName']]
-    Export: { "Name" : !Join ['', ['JDBCConnectionString', '-', !Ref Environment]]}
+    Export: { "Name": !Join ['', ['JDBCConnectionString', '-', !Ref EnvironmentInstance]]}
 
   DBNameString:
     Description: JDBC connection string for the database
     Value: !Ref DBName
-    Export: { "Name" : !Join ['', ['DBName', '-', !Ref Environment]]}
+    Export: { "Name": !Join ['', ['DBName', '-', !Ref EnvironmentInstance]]}

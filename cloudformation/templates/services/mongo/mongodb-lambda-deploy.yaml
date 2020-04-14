@@ -1,0 +1,71 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: Create role and lambda funcation for mongo management
+
+Parameters:
+  TemplateBucket:
+    Type: String
+
+  EnvironmentInstance:
+    Type: String
+
+  VPCLambdaSubnets:
+    Description: Subnets which required Mongo to be deployed
+    Type: List<AWS::EC2::Subnet::Id>
+
+  VPCSecurityGroups:
+    Description: List of SecurityGroup for the VPC to refine database access
+    Type: List<AWS::EC2::SecurityGroup::Id>
+
+
+Resources:
+  RDSManagedPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Properties:
+      ManagedPolicyName: 'mongodb-manager-lambda-policy'
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: ReadOnlyAccessSceretsByAWSAccount
+            Effect: Allow
+            Action:
+              - 'secretsmanager:GetResourcePolicy'
+              - 'secretsmanager:GetSecretValue'
+              - 'secretsmanager:DescribeSecret'
+              - 'secretsmanager:ListSecretVersionIds'
+            Resource: !Join ['', ['arn:aws:secretsmanager:', !Ref 'AWS::Region', ':', !Ref 'AWS::AccountId' , ':secret:*' ]]
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 'cfn-mongo-manager-lambda-role'
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
+        - !Ref RDSManagedPolicy
+
+  RDSManagerFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: com.i2n.RDSManager::handleRequest
+      Role:
+        Fn::GetAtt: [ LambdaExecutionRole, "Arn" ]
+      Code:
+        S3Bucket: !Ref TemplateBucket
+        S3Key: !Join ['', ['lambda', '/', 'MongoManager.jar']]
+      Runtime: java11
+      Timeout: 60
+      FunctionName: !Join ['',['MongoManager', '-', !Ref EnvironmentInstance]]
+      VpcConfig:
+        SecurityGroupIds: !Ref VPCSecurityGroups
+        SubnetIds: !Ref VPCLambdaSubnets
+

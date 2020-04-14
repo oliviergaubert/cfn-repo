@@ -18,7 +18,7 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
 
-  Environment:
+  EnvironmentInstance:
     Type: String
 
   RootValueUsername:
@@ -33,31 +33,12 @@ Parameters:
   AdminValuePassword:
     Type: String
 
+  ApplicationValueUsername:
+    Type: String
+
+  ApplicationValuePassword:
+    Type: String
 Resources:
-
-  MongoRootSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      GenerateSecretString:
-        SecretStringTemplate: '{"username": "mongo-root"}'
-        GenerateStringKey: 'password'
-        PasswordLength: 50
-        ExcludeCharacters: '"@/\'
-      Tags:
-        - Key: env
-          Value: !Ref Environment
-
-  MongoAdminSecret:
-    Type: AWS::SecretsManager::Secret
-    Properties:
-      GenerateSecretString:
-        SecretStringTemplate: '{"username": "mongo-admin"}'
-        GenerateStringKey: 'password'
-        PasswordLength: 50
-        ExcludeCharacters: '"@/\'
-      Tags:
-        - Key: env
-          Value: !Ref Environment
 
   MongoSecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -264,6 +245,11 @@ Resources:
                     - !Ref AdminValueUsername
                     - "', pwd: '"
                     - !Ref AdminValuePassword
+                    - "', roles: [ { role: 'userAdminAnyDatabase', db: 'admin' } ]});"
+                    - "\ndb.createUser({user: '"
+                    - !Ref ApplicationValueUsername
+                    - "', pwd: '"
+                    - !Ref ApplicationValuePassword
                     - "', roles: [ { role: 'userAdminAnyDatabase', db: 'admin' } ]});"
               mode: '000644'
               owner: root
