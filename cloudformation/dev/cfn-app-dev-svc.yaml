@@ -53,26 +53,26 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/codepipeline-pipeline.yaml"
       Tags:
-        - key: owner
-          value: nps
-        - key: EnvironmentInstance
-          value: !Ref EnvironmentInstance
-        - key: capability
-          value: security
-        - key: components
-          value: iam
-        - key: source-code
-          value: na
-        - key: application
-          value: any
-        - key: service
-          value: compute
-        - key: is-production
-          value: no
-        - key: runbook-description-confluence-url
-          value: no
-        - key: infrastructure-support
-          value: devops
+        - Key: owner
+          Value: nps
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
+        - Key: capability
+          Value: nosql-database
+        - Key: components
+          Value: ec2
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
       Parameters:
         Cluster: "pathways-mm-app-dev-env"
         Service: !GetAtt Service.Outputs.Service
@@ -86,26 +86,26 @@ Resources:
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/service.yaml"
       Tags:
-        - key: owner
-          value: nps
-        - key: EnvironmentInstance
-          value: !Ref EnvironmentInstance
-        - key: capability
-          value: security
-        - key: components
-          value: iam
-        - key: source-code
-          value: na
-        - key: application
-          value: any
-        - key: service
-          value: compute
-        - key: is-production
-          value: no
-        - key: runbook-description-confluence-url
-          value: no
-        - key: infrastructure-support
-          value: devops
+        - Key: owner
+          Value: nps
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
+        - Key: capability
+          Value: nosql-database
+        - Key: components
+          Value: ec2
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
       Parameters:
         ServiceName: !Ref AWS::StackName
         Cluster: "pathways-mm-app-dev-env"
