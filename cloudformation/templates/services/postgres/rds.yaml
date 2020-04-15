@@ -30,7 +30,6 @@ Parameters:
 
   EnvironmentInstance:
     Type: String
-    Default: DEV
 
 Resources:
   RDSRootSecret:
@@ -38,66 +37,57 @@ Resources:
     Properties:
       Description: 'RDS encrypted credential; randomly generated JSON.'
       GenerateSecretString:
-      SecretStringTemplate: '{"username": "postgres"}'
-      GenerateStringKey: 'password'
-      PasswordLength: 50
+        SecretStringTemplate: '{"username": "postgres"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 50
+        ExcludeCharacters: '"@/\'
       Name:
         'Fn::Join':
           - ''
           - - 'rdsRootAccount'
             - 'Fn::Transform':
-                Name: Cap
+                Name: 'String'
                 Parameters:
                   InputString: !Ref EnvironmentInstance
                   Operation: Capitalize
-      ExcludeCharacters: '"@/\'
-    Tags:
-      - Key: env
-        Value: !Ref EnvironmentInstance
 
   RDSlambdaSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
       Description: 'RDS encrypted credential; randomly generated JSON.'
       GenerateSecretString:
-      SecretStringTemplate: '{"username": "postgres"}'
-      GenerateStringKey: 'password'
-      PasswordLength: 50
+        SecretStringTemplate: '{"username": "postgres"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 50
+        ExcludeCharacters: '"@/\'
       Name:
         'Fn::Join':
           - ''
           - - 'rdslambdaAccount'
             - 'Fn::Transform':
-                Name: Cap
+                Name: 'String'
                 Parameters:
                   InputString: !Ref EnvironmentInstance
                   Operation: Capitalize
-      ExcludeCharacters: '"@/\'
-    Tags:
-      - Key: env
-        Value: !Ref EnvironmentInstance
 
   RDSApplicationSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
       Description: 'RDS encrypted credential; randomly generated JSON.'
       GenerateSecretString:
-      SecretStringTemplate: '{"username": "postgres"}'
-      GenerateStringKey: 'password'
-      PasswordLength: 50
+        SecretStringTemplate: '{"username": "postgres"}'
+        GenerateStringKey: 'password'
+        PasswordLength: 50
+        ExcludeCharacters: '"@/\'
       Name:
         'Fn::Join':
           - ''
           - - 'rdsApplicationAccount'
             - 'Fn::Transform':
-                Name: Cap
+                Name: 'String'
                 Parameters:
                   InputString: !Ref EnvironmentInstance
                   Operation: Capitalize
-      ExcludeCharacters: '"@/\'
-    Tags:
-      - Key: env
-        Value: !Ref EnvironmentInstance
 
   DEVDBSubnet:
     Type: AWS::RDS::DBSubnetGroup

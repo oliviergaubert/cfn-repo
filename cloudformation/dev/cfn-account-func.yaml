@@ -1,0 +1,17 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Creates string funcation with account
+
+Parameters:
+  TemplateBucket:
+    Type: String
+
+  EnvironmentInstance:
+    Type: String
+
+Resources:
+  Roles:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/StringFunctions/transform.yaml"

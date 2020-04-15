@@ -2,10 +2,12 @@ $S3_BUCKET = "aws-cloud-formation-repo-engineering"
 $CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
 $CFN_TEMPLATE_ENV = "cfn-app-dev-env.yaml"
 $CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
+$CFN_TEMPLATE_FUNCATION = "cfn-account-func.yaml"
 
 $NETStackName = "pathways-dev-net"
 $AccountStackName = "pathways-dev-iam"
 $EnvStackName = "pathways-mm-app-dev-env"
+$FuncationStackName = "pathways-mm-app-dev-func"
 
 $AppEnv = "dev"
 $DBName = "pathwaysMmAppDevEnv"
@@ -29,8 +31,6 @@ $RDSSubnet3CIDR = "10.8.22.0/24"
 $MongoSubnet1CIDR = "10.8.30.0/24"
 $MongoSubnet2CIDR = "10.8.31.0/24"
 $MongoSubnet3CIDR = "10.8.32.0/24"
-
-
 
 ###################################### Network ###################################################
 
@@ -57,6 +57,24 @@ aws ecs put-account-setting-default --name awsvpcTrunking --value enabled --regi
 
 ################################################################################################
 
+###################################### Funcation Createion ##############################
+
+aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_FUNCATION s3://$S3_BUCKET --region $REGION --profile $PROFILE
+
+Write-Output 'Deleting the stack...'
+aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $FuncationStackName
+Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
+aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $FuncationStackName
+Write-Output 'Done'
+
+aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCATION
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $FuncationStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCATION --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv
+aws cloudformation describe-stack-events --stack-name $FuncationStackName  --region $REGION --profile $PROFILE
+Write-Output 'Awaiting completion of the following stacking:' $FuncationStackName
+aws cloudformation wait stack-create-complete --stack-name $FuncationStackName --region $REGION --profile $PROFILE
+
+##################################################################################################
+
 ###################################### IAMs Users/Roles Createion ##############################
 
 aws s3 cp ..\cloudformation\templates\services\IAM\$CFN_TEMPLATE_ACCOUNT s3://$S3_BUCKET --region $REGION --profile $PROFILE
@@ -70,7 +88,7 @@ Write-Output 'Done'
 aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ACCOUNT
 aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $AccountStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ACCOUNT --capabilities CAPABILITY_NAMED_IAM
 aws cloudformation describe-stack-events --stack-name $AccountStackName  --region $REGION --profile $PROFILE
-Write-Output 'Awaiting completion of the following stacking:' $ACCOUNT_STACK_NAME
+Write-Output 'Awaiting completion of the following stacking:' $AccountStackName
 aws cloudformation wait stack-create-complete --stack-name $AccountStackName --region $REGION --profile $PROFILE
 
 ##################################################################################################
@@ -89,7 +107,7 @@ Write-Output 'Validating template...'
 aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$EnvStackName.yaml
 
 Write-Output 'Creating stack...'
-aws cloudformation create-stack --region $REGION --profile i2n-engineering --stack-name $EnvStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ENV --parameters ParameterKey=DBName,ParameterValue=$DBName ParameterKey=ClusterName,ParameterValue=$EnvStackName ParameterKey=LbName,ParameterValue=$EnvStackName ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --region $REGION --profile i2n-engineering --stack-name $EnvStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ENV --parameters ParameterKey=DBName,ParameterValue=$DBName ParameterKey=ClusterName,ParameterValue=$EnvStackName ParameterKey=LbName,ParameterValue=$EnvStackName ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv --capabilities CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND
 Write-Output 'Awaiting completion of the following stacking: ' $EnvStackName
 aws cloudformation describe-stack-events --stack-name $EnvStackName --region $REGION --profile $PROFILE
 aws cloudformation wait stack-create-complete --stack-name $EnvStackName --region $REGION --profile $PROFILE

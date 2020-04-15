@@ -174,5 +174,7 @@ Resources:
         SubnetId: !Select [0, !Split [",", !ImportValue pathways-dev-net-mongo-subnets]]
         VpcId: { "Fn::ImportValue" : "pathways-dev-net-vpc-id" }
         TemplateBucket: !Ref TemplateBucket
+        VPCLambdaSubnets: { "Fn::ImportValue": "pathways-dev-net-lambda-subnets" }
+        VPCSecurityGroups: { "Fn::ImportValue": "pathways-dev-net-sec-grp" }
         
 

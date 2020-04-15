@@ -1,11 +1,11 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Single node MongoDB deployment with a RAID10 storage configuration
+Description: Creates AWS secret for all mongo accounts
 Parameters:
 
   EnvironmentInstance:
     Type: String
-    Default: DEV
+    Default: dev
 
 Resources:
 
@@ -23,13 +23,10 @@ Resources:
           - ''
           - - 'mongoRootAccount'
             - 'Fn::Transform':
-                Name: Cap
+                Name: 'String'
                 Parameters:
                   InputString: !Ref EnvironmentInstance
                   Operation: Capitalize
-      Tags:
-        - Key: env
-          Value: !Ref EnvironmentInstance
 
   MongoAdminSecret:
     Type: AWS::SecretsManager::Secret
@@ -45,13 +42,10 @@ Resources:
           - ''
           - - 'mongoAdminAccount'
             - 'Fn::Transform':
-                Name: Cap
+                Name: 'String'
                 Parameters:
                   InputString: !Ref EnvironmentInstance
                   Operation: Capitalize
-      Tags:
-        - Key: env
-          Value: !Ref EnvironmentInstance
 
   MongoApplicationSecret:
     Type: AWS::SecretsManager::Secret
@@ -67,13 +61,10 @@ Resources:
           - ''
           - - 'mongoApplicationAccount'
             - 'Fn::Transform':
-                Name: Cap
+                Name: 'String'
                 Parameters:
                   InputString: !Ref EnvironmentInstance
                   Operation: Capitalize
-      Tags:
-        - Key: env
-          Value: !Ref EnvironmentInstance
 
 
 Outputs:
@@ -99,10 +90,10 @@ Outputs:
 
   MongoApplicationSecretUsername:
     Description: MongoRootSecret Value
-    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoApplictionSecret, ':SecretString:username}}' ]]
-    Export: { "Name" : !Join ['', ['MongoAdminSecretUsername', '-', !Ref EnvironmentInstance]]}
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoApplicationSecret, ':SecretString:username}}' ]]
+    Export: { "Name" : !Join ['', ['MongoApplicationSecretUsername', '-', !Ref EnvironmentInstance]]}
 
   MongoApplicationSecretPassword:
     Description: MongoRootSecret Value
-    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoApplictionSecret, ':SecretString:password}}' ]]
-    Export: { "Name": !Join ['', ['MongoAdminSecretPassword', '-', !Ref EnvironmentInstance]]}
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref MongoApplicationSecret, ':SecretString:password}}' ]]
+    Export: { "Name": !Join ['', ['MongoApplicationSecretPassword', '-', !Ref EnvironmentInstance]]}

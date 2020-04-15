@@ -1,6 +1,6 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Single node MongoDB deployment with a RAID10 storage configuration
+Description: Creates mongo instance
 Parameters:
 
   InstanceType:
