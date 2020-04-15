@@ -11,7 +11,54 @@ Parameters:
     Type: String
 
 Resources:
-  Roles:
+  Transfrom:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/StringFunctions/transform.yaml"
+      Tags:
+        - key: owner
+          value: nps
+        - key: EnvironmentInstance
+          value: !Ref EnvironmentInstance
+        - key: capability
+          value: security
+        - key: components
+          value: iam
+        - key: source-code
+          value: na
+        - key: application
+          value: any
+        - key: service
+          value: compute
+        - key: is-production
+          value: no
+        - key: runbook-description-confluence-url
+          value: no
+        - key: infrastructure-support
+          value: devops
+
+  Inspector:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/inspector/inspector.yaml"
+      Tags:
+        - key: owner
+          value: nps
+        - key: EnvironmentInstance
+          value: !Ref EnvironmentInstance
+        - key: capability
+          value: security
+        - key: components
+          value: iam
+        - key: source-code
+          value: na
+        - key: application
+          value: any
+        - key: service
+          value: compute
+        - key: is-production
+          value: no
+        - key: runbook-description-confluence-url
+          value: no
+        - key: infrastructure-support
+          value: devops

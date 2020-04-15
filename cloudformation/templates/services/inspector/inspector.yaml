@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: AWS CloudFormation template inspector
+
+Resources:
+  AccountAssessmentTarget:
+    Type: AWS::Inspector::AssessmentTarget
+    Properties:
+      AssessmentTargetName: Assessment-Target-All-Instances
+
+  AssessmentTemplateCIS:
+    Type: AWS::Inspector::AssessmentTemplate
+    Properties:
+      AssessmentTargetArn: !GetAtt AccountAssessmentTarget.Arn
+      AssessmentTemplateName: Assessment-Template-CIS
+      DurationInSeconds: 3600
+      RulesPackageArns:
+        - arn:aws:inspector:eu-west-2:146838936955:rulespackage/0-IeCjwf1W
+
+  AssessmentTemplateSecurityBestPractices:
+    Type: AWS::Inspector::AssessmentTemplate
+    Properties:
+      AssessmentTargetArn: !GetAtt AccountAssessmentTarget.Arn
+      AssessmentTemplateName: Assessment-Template-Security-Best-Practices
+      DurationInSeconds: 3600
+      RulesPackageArns:
+        - arn:aws:inspector:eu-west-2:146838936955:rulespackage/0-XApUiSaP
+
+  AssessmentTemplateNetworkReachability:
+    Type: AWS::Inspector::AssessmentTemplate
+    Properties:
+      AssessmentTargetArn: !GetAtt AccountAssessmentTarget.Arn
+      AssessmentTemplateName: Assessment-Template-Network-Reachability
+      DurationInSeconds: 3600
+      RulesPackageArns:
+        - arn:aws:inspector:eu-west-2:146838936955:rulespackage/0-AizSYyNq
+
+  AssessmentTemplateCVE:
+    Type: AWS::Inspector::AssessmentTemplate
+    Properties:
+      AssessmentTargetArn: !GetAtt AccountAssessmentTarget.Arn
+      AssessmentTemplateName: Assessment-Template-CVE
+      DurationInSeconds: 3600
+      RulesPackageArns:
+        - arn:aws:inspector:eu-west-2:146838936955:rulespackage/0-kZGCqcE1

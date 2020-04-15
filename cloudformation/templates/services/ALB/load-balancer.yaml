@@ -54,7 +54,6 @@ Resources:
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: 30
-    #DependsOn: LoadBalancer
 
   ListenerRule:
     Type: AWS::ElasticLoadBalancingV2::ListenerRule
