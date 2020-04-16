@@ -3,7 +3,7 @@ AWSTemplateFormatVersion: 2010-09-09
 
 Description: >
   This is a parent template for an application service to implement all the AWS resources 
-  required to support buid, packaging and deployment into a dynamically generated application
+  required to support build, packaging and deployment into a dynamically generated application
   service EnvironmentInstance using an AWS ECS Cluster, Task Defintion and Service. In addition, an
   Application Load Balancer is created to support Service Discovery.
 
