@@ -41,6 +41,7 @@ Resources:
         EnvironmentInstance: !Ref EnvironmentInstance
         VPCSecurityGroups: !Ref VPCSecurityGroups
         VPCLambdaSubnets: !Ref VPCLambdaSubnets
+        TemplateBucket: !Ref TemplateBucket
 
   MongoNode:
     DependsOn:

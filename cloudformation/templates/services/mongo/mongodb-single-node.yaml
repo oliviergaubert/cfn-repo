@@ -38,6 +38,7 @@ Parameters:
 
   ApplicationValuePassword:
     Type: String
+
 Resources:
 
   MongoSecurityGroup:

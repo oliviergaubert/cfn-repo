@@ -3,6 +3,7 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: Create role and lambda funcation for mongo management
 
 Parameters:
+
   TemplateBucket:
     Type: String
 
@@ -10,7 +11,7 @@ Parameters:
     Type: String
 
   VPCLambdaSubnets:
-    Description: Subnets which required Mongo to be deployed
+    Description: Subnets which required RDS to be deployed
     Type: List<AWS::EC2::Subnet::Id>
 
   VPCSecurityGroups:
@@ -19,7 +20,7 @@ Parameters:
 
 
 Resources:
-  RDSManagedPolicy:
+  MongoManagedPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Properties:
       ManagedPolicyName: 'mongodb-manager-lambda-policy'
@@ -51,9 +52,9 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-        - !Ref RDSManagedPolicy
+        - !Ref MongoManagedPolicy
 
-  RDSManagerFunction:
+  MongoManagerFunction:
     Type: AWS::Lambda::Function
     Properties:
       Handler: com.i2n.RDSManager::handleRequest
@@ -68,4 +69,3 @@ Resources:
       VpcConfig:
         SecurityGroupIds: !Ref VPCSecurityGroups
         SubnetIds: !Ref VPCLambdaSubnets
-

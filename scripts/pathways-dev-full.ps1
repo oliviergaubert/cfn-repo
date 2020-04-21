@@ -1,9 +1,6 @@
-$S3_BUCKET = "aws-cloud-formation-repo-engineering"
-$CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
-$CFN_TEMPLATE_ENV = "cfn-app-dev-env.yaml"
-$CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
-$CFN_TEMPLATE_FUNCATION = "cfn-account-func.yaml"
+#################################### Change me #####################################################
 
+$S3_BUCKET = "aws-cloud-formation-repo-engineering"
 $NETStackName = "pathways-dev-net"
 $AccountStackName = "pathways-dev-iam"
 $EnvStackName = "pathways-mm-app-dev-env"
@@ -12,6 +9,13 @@ $FuncationStackName = "pathways-mm-app-dev-func"
 $AppEnv = "dev"
 $DBName = "pathwaysMmAppDevEnv"
 $NamespaceName= 'pathways-dev-testing'
+
+###################################### Completed ###################################################
+
+$CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
+$CFN_TEMPLATE_ENV = "cfn-app-dev-env.yaml"
+$CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
+$CFN_TEMPLATE_FUNCATION = "cfn-account-func.yaml"
 
 $REGION = "eu-west-2"
 $PROFILE = "i2n-engineering"
