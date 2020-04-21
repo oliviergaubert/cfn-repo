@@ -39,9 +39,9 @@ Resources:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/mongo/mongodb-lambda-deploy.yaml"
       Parameters:
         EnvironmentInstance: !Ref EnvironmentInstance
-        VPCSecurityGroups: !Ref VPCSecurityGroups
-        VPCLambdaSubnets: !Ref VPCLambdaSubnets
         TemplateBucket: !Ref TemplateBucket
+        VPCLambdaSubnets: !Ref VPCLambdaSubnets
+        VPCSecurityGroups: !Ref VPCSecurityGroups
 
   MongoNode:
     DependsOn:
