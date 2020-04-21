@@ -43,57 +43,57 @@ aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_NET s3://$S3_BUCKET --region $
 aws s3 cp --recursive ..\cloudformation\templates s3://$S3_BUCKET/templates --region $REGION --profile $PROFILE
 aws s3 cp --recursive ..\cloudformation\lambda s3://$S3_BUCKET/lambda --region $REGION --profile $PROFILE
 
-#Write-Output 'Competeled copied'
-#
-#Write-Output 'Deleting the stack...'
-#aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $NETStackName
-#Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
-#aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $NETStackName
-#Write-Output 'Delete completed'
-#
-#Write-Output 'Creating the stack...'
-#aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $NETStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_NET --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv ParameterKey=StackName,ParameterValue=$NETStackName ParameterKey=VpcCIDR,ParameterValue=$VpcCIDR ParameterKey=DMZSubnet1CIDR,ParameterValue=$DMZSubnet1CIDR ParameterKey=DMZSubnet2CIDR,ParameterValue=$DMZSubnet2CIDR  ParameterKey=ECSSubnet1CIDR,ParameterValue=$ECSSubnet1CIDR ParameterKey=ECSSubnet2CIDR,ParameterValue=$ECSSubnet2CIDR ParameterKey=ECSSubnet3CIDR,ParameterValue=$ECSSubnet3CIDR ParameterKey=ServicesSubnet1CIDR,ParameterValue=$ServicesSubnet1CIDR ParameterKey=ServicesSubnet2CIDR,ParameterValue=$ServicesSubnet2CIDR ParameterKey=ServicesSubnet3CIDR,ParameterValue=$ServicesSubnet3CIDR ParameterKey=RDSSubnet1CIDR,ParameterValue=$RDSSubnet1CIDR ParameterKey=RDSSubnet2CIDR,ParameterValue=$RDSSubnet2CIDR ParameterKey=RDSSubnet3CIDR,ParameterValue=$RDSSubnet3CIDR ParameterKey=MongoSubnet1CIDR,ParameterValue=$MongoSubnet1CIDR ParameterKey=MongoSubnet2CIDR,ParameterValue=$MongoSubnet2CIDR ParameterKey=MongoSubnet3CIDR,ParameterValue=$MongoSubnet3CIDR ParameterKey=NamespaceName,ParameterValue=$NamespaceName
-#Write-Output 'Awaiting completion of the following stacking: ' $NETStackName
-#aws cloudformation wait stack-create-complete --stack-name $NETStackName --region $REGION --profile $PROFILE
-#Write-Output 'Stacked completed'
-#
-#aws ecs put-account-setting-default --name awsvpcTrunking --value enabled --region $REGION --profile $PROFILE
-#
-#################################################################################################
-#
-####################################### Funcation Createion ##############################
-#
-#aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_FUNCATION s3://$S3_BUCKET --region $REGION --profile $PROFILE
-#
-#Write-Output 'Deleting the stack...'
-#aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $FuncationStackName
-#Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
-#aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $FuncationStackName
-#Write-Output 'Done'
-#
-#aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCATION
-#aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $FuncationStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCATION --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv
-#aws cloudformation describe-stack-events --stack-name $FuncationStackName  --region $REGION --profile $PROFILE
-#Write-Output 'Awaiting completion of the following stacking:' $FuncationStackName
-#aws cloudformation wait stack-create-complete --stack-name $FuncationStackName --region $REGION --profile $PROFILE
-#
-###################################################################################################
-#
-####################################### IAMs Users/Roles Createion ##############################
-#
-#aws s3 cp ..\cloudformation\templates\services\IAM\$CFN_TEMPLATE_ACCOUNT s3://$S3_BUCKET --region $REGION --profile $PROFILE
-#
-#Write-Output 'Deleting the stack...'
-#aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $AccountStackName
-#Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
-#aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $AccountStackName
-#Write-Output 'Done'
-#
-#aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ACCOUNT
-#aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $AccountStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ACCOUNT --capabilities CAPABILITY_NAMED_IAM
-#aws cloudformation describe-stack-events --stack-name $AccountStackName  --region $REGION --profile $PROFILE
-#Write-Output 'Awaiting completion of the following stacking:' $AccountStackName
-#aws cloudformation wait stack-create-complete --stack-name $AccountStackName --region $REGION --profile $PROFILE
+Write-Output 'Competeled copied'
+
+Write-Output 'Deleting the stack...'
+aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $NETStackName
+Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
+aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $NETStackName
+Write-Output 'Delete completed'
+
+Write-Output 'Creating the stack...'
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $NETStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_NET --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv ParameterKey=StackName,ParameterValue=$NETStackName ParameterKey=VpcCIDR,ParameterValue=$VpcCIDR ParameterKey=DMZSubnet1CIDR,ParameterValue=$DMZSubnet1CIDR ParameterKey=DMZSubnet2CIDR,ParameterValue=$DMZSubnet2CIDR  ParameterKey=ECSSubnet1CIDR,ParameterValue=$ECSSubnet1CIDR ParameterKey=ECSSubnet2CIDR,ParameterValue=$ECSSubnet2CIDR ParameterKey=ECSSubnet3CIDR,ParameterValue=$ECSSubnet3CIDR ParameterKey=ServicesSubnet1CIDR,ParameterValue=$ServicesSubnet1CIDR ParameterKey=ServicesSubnet2CIDR,ParameterValue=$ServicesSubnet2CIDR ParameterKey=ServicesSubnet3CIDR,ParameterValue=$ServicesSubnet3CIDR ParameterKey=RDSSubnet1CIDR,ParameterValue=$RDSSubnet1CIDR ParameterKey=RDSSubnet2CIDR,ParameterValue=$RDSSubnet2CIDR ParameterKey=RDSSubnet3CIDR,ParameterValue=$RDSSubnet3CIDR ParameterKey=MongoSubnet1CIDR,ParameterValue=$MongoSubnet1CIDR ParameterKey=MongoSubnet2CIDR,ParameterValue=$MongoSubnet2CIDR ParameterKey=MongoSubnet3CIDR,ParameterValue=$MongoSubnet3CIDR ParameterKey=NamespaceName,ParameterValue=$NamespaceName
+Write-Output 'Awaiting completion of the following stacking: ' $NETStackName
+aws cloudformation wait stack-create-complete --stack-name $NETStackName --region $REGION --profile $PROFILE
+Write-Output 'Stacked completed'
+
+aws ecs put-account-setting-default --name awsvpcTrunking --value enabled --region $REGION --profile $PROFILE
+
+################################################################################################
+
+###################################### Funcation Createion ##############################
+
+aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_FUNCATION s3://$S3_BUCKET --region $REGION --profile $PROFILE
+
+Write-Output 'Deleting the stack...'
+aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $FuncationStackName
+Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
+aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $FuncationStackName
+Write-Output 'Done'
+
+aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCATION
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $FuncationStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCATION --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv
+aws cloudformation describe-stack-events --stack-name $FuncationStackName  --region $REGION --profile $PROFILE
+Write-Output 'Awaiting completion of the following stacking:' $FuncationStackName
+aws cloudformation wait stack-create-complete --stack-name $FuncationStackName --region $REGION --profile $PROFILE
+
+##################################################################################################
+
+###################################### IAMs Users/Roles Createion ##############################
+
+aws s3 cp ..\cloudformation\templates\services\IAM\$CFN_TEMPLATE_ACCOUNT s3://$S3_BUCKET --region $REGION --profile $PROFILE
+
+Write-Output 'Deleting the stack...'
+aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $AccountStackName
+Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
+aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $AccountStackName
+Write-Output 'Done'
+
+aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ACCOUNT
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $AccountStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ACCOUNT --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation describe-stack-events --stack-name $AccountStackName  --region $REGION --profile $PROFILE
+Write-Output 'Awaiting completion of the following stacking:' $AccountStackName
+aws cloudformation wait stack-create-complete --stack-name $AccountStackName --region $REGION --profile $PROFILE
 
 ##################################################################################################
 
