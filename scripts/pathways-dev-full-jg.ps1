@@ -1,14 +1,14 @@
 #################################### Change me #####################################################
 
-$S3_BUCKET = "aws-cloud-formation-repo-engineering"
-$NETStackName = "pathways-dev-net"
-$AccountStackName = "pathways-dev-iam"
-$EnvStackName = "pathways-mm-app-dev-env"
-$FuncationStackName = "pathways-mm-app-dev-func"
+$S3_BUCKET = "aws-cloud-formation-repo-engineering-jg"
+$NETStackName = "pathways-dev-net-jg"
+$AccountStackName = "pathways-dev-iam-jg"
+$EnvStackName = "pathways-mm-app-dev-env-jg"
+$FuncationStackName = "pathways-mm-app-dev-func-jg"
 
-$AppEnv = "dev"
-$DBName = "pathwaysMmAppDevEnv"
-$NamespaceName= 'pathways-dev-testing'
+$AppEnv = "devjg"
+$DBName = "pathwaysMmAppDevEnvjg"
+$NamespaceName= 'pathways-dev-testing-jg'
 
 ###################################### Completed ###################################################
 
