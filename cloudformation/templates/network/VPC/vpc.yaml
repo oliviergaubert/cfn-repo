@@ -14,6 +14,8 @@
       Type: AWS::EC2::VPC
       Properties:
         CidrBlock: !Ref VpcCIDR
+        Tags:
+          Name: !Ref Name
 
     InternetGateway:
       Type: AWS::EC2::InternetGateway
@@ -22,11 +24,6 @@
       Type: AWS::EC2::VPCGatewayAttachment
       Properties:
         InternetGatewayId: !Ref InternetGateway
-        VpcId: !Ref VPC
-
-    EgressInternetGateway:
-      Type: AWS::EC2::EgressOnlyInternetGateway
-      Properties:
         VpcId: !Ref VPC
 
   Outputs:
@@ -42,7 +39,3 @@
     InternetGatewayId:
       Value: !Ref InternetGateway
       Export: { "Name": !Join ['', [!Ref Name, '-', 'igw-id']] }
-
-    EgressInternetGatewayId:
-      Value: !Ref EgressInternetGateway
-      Export: { "Name": !Join ['', [!Ref Name, '-', 'eigw-id']] }
