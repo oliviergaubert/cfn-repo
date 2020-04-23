@@ -26,6 +26,11 @@
         InternetGatewayId: !Ref InternetGateway
         VpcId: !Ref VPC
 
+    EgressInternetGateway:
+      Type: AWS::EC2::EgressOnlyInternetGateway
+      Properties:
+        VpcId: !Ref VPC
+
   Outputs:
 
     VpcId:
@@ -39,3 +44,7 @@
     InternetGatewayId:
       Value: !Ref InternetGateway
       Export: { "Name": !Join ['', [!Ref Name, '-', 'igw-id']] }
+
+    EgressInternetGatewayId:
+      Value: !Ref EgressInternetGateway
+      Export: { "Name": !Join ['', [!Ref Name, '-', 'eigw-id']] }
