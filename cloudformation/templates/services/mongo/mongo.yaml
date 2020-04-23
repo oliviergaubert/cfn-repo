@@ -16,14 +16,6 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
 
-  VPCLambdaSubnets:
-    Description: Subnets which required RDS to be deployed
-    Type: List<AWS::EC2::Subnet::Id>
-
-  VPCSecurityGroups:
-    Description: List of SecurityGroup for the VPC to refine database access
-    Type: List<AWS::EC2::SecurityGroup::Id>
-
 Resources:
 
   Accounts:
@@ -32,16 +24,6 @@ Resources:
       TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/mongo/mongodb-accounts.yaml"
       Parameters:
         EnvironmentInstance: !Ref EnvironmentInstance
-
-  MongoManagerLamdbda:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/mongo/mongodb-lambda-deploy.yaml"
-      Parameters:
-        EnvironmentInstance: !Ref EnvironmentInstance
-        TemplateBucket: !Ref TemplateBucket
-        VPCLambdaSubnets: !Ref VPCLambdaSubnets
-        VPCSecurityGroups: !Ref VPCSecurityGroups
 
   MongoNode:
     DependsOn:

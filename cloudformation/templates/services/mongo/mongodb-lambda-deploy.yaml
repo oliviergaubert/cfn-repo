@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
-Description: Create role and lambda funcation for mongo management
+Description: Create role and lambda funcation for RDS management
 
 Parameters:
   TemplateBucket:
@@ -16,7 +16,6 @@ Parameters:
   VPCSecurityGroups:
     Description: List of SecurityGroup for the VPC to refine database access
     Type: List<AWS::EC2::SecurityGroup::Id>
-
 
 
 Resources:
