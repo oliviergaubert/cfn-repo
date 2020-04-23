@@ -108,10 +108,10 @@ aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFIL
 Write-Output 'Done'
 
 Write-Output 'Validating template...'
-aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$EnvStackName.yaml
+aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ENV
 
 Write-Output 'Creating stack...'
-aws cloudformation create-stack --region $REGION --profile i2n-engineering --stack-name $EnvStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ENV --parameters ParameterKey=DBName,ParameterValue=$DBName ParameterKey=ClusterName,ParameterValue=$EnvStackName ParameterKey=LbName,ParameterValue=$EnvStackName ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv --capabilities CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $EnvStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_ENV --parameters ParameterKey=DBName,ParameterValue=$DBName ParameterKey=ClusterName,ParameterValue=$EnvStackName ParameterKey=LbName,ParameterValue=$EnvStackName ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv --capabilities CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND
 Write-Output 'Awaiting completion of the following stacking: ' $EnvStackName
 aws cloudformation describe-stack-events --stack-name $EnvStackName --region $REGION --profile $PROFILE
 aws cloudformation wait stack-create-complete --stack-name $EnvStackName --region $REGION --profile $PROFILE
