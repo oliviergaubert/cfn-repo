@@ -14,8 +14,6 @@
       Type: AWS::EC2::VPC
       Properties:
         CidrBlock: !Ref VpcCIDR
-        Tags:
-          Name: !Ref Name
 
     InternetGateway:
       Type: AWS::EC2::InternetGateway
