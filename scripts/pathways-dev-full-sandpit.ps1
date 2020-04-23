@@ -1,14 +1,14 @@
 #################################### Change me #####################################################
 
-$S3_BUCKET = "aws-cloud-formation-repo-engineering-jg"
-$NETStackName = "pathways-dev-net-jg"
-$AccountStackName = "pathways-dev-iam-jg"
-$EnvStackName = "pathways-mm-app-dev-env-jg"
-$FuncationStackName = "pathways-mm-app-dev-func-jg"
+$S3_BUCKET = "aws-cloud-formation-repo-engineering-1"
+$NETStackName = "pathways-dev-net"
+$AccountStackName = "pathways-dev-iam"
+$EnvStackName = "pathways-mm-app-dev-env"
+$FuncationStackName = "pathways-mm-app-dev-func"
 
-$AppEnv = "devjg"
-$DBName = "pathwaysMmAppDevEnvjg"
-$NamespaceName= 'pathways-dev-testing-jg'
+$AppEnv = "dev"
+$DBName = "pathwaysMmAppDevEnv"
+$NamespaceName= 'pathways-dev-testing'
 
 ###################################### Completed ###################################################
 
@@ -18,7 +18,7 @@ $CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
 $CFN_TEMPLATE_FUNCATION = "cfn-account-func.yaml"
 
 $REGION = "eu-west-2"
-$PROFILE = "i2n-engineering"
+$PROFILE = "pathways-sandpit"
 
 $VpcCIDR = "10.8.0.0/16"
 $DMZSubnet1CIDR = "10.8.1.0/24"
