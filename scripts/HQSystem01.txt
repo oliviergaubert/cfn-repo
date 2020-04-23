@@ -1,0 +1,26 @@
+﻿HQSystem01 - Windows Server Update Services server (WSUS)			
+-----------------------------------------------------------------------------------------------------------------------------------
+Deployed to servers and computers via WSUS Policy (i2N.local GPO)
+Products and Classifications
+➔ Critical Updates
+➔ Definition Updates
+➔ Features Packs
+➔ Security Updates
+➔ Updates
+➔ Upgrades
+Synchronization Schedule
+➔ 00:29:00
+➔ 24 times per day
+Automatic Approvals
+➔ Critical Updates
+➔ Definition Updates
+➔ Security Updates
+Kerio Firewall Traffic Rules
+➔ WSUS Internet (SSL)  ➔ 62.232.198.68 ➔ TCP 8533
+➔ WSUS Internet (HTTP) ➔ 62.232.198.68 ➔ TCP 8532
+FQDN ➔ DNS in Azure
+➔ mail2.i2n.com	   62.232.198.68 Primary IP Unit 3
+    ➔ updates.i2n.com 
+   62.232.198.69 Unit 1a WiFi
+Need to peridocally run Server Cleanup
+Sometimes need to Approve Updates - this was highlightes as per ITHC

@@ -1,0 +1,13 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Create a Private CA with internal host domain.
+
+RootInternalCA:
+ Type: AWS::ACMPCA::CertificateAuthority
+ Properties:
+  KeyAlgorithm: RSA_2048
+  SigningAlgorithm: SHA256WITHRSA
+  Subject:
+    CommonName: pathways.internal
+  Type: ROOT
