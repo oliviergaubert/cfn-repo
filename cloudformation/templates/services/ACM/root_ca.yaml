@@ -1,13 +1,46 @@
 ---
 AWSTemplateFormatVersion: 2010-09-09
 
-Description: Create a Private CA with internal host domain.
-
-RootInternalCA:
- Type: AWS::ACMPCA::CertificateAuthority
- Properties:
-  KeyAlgorithm: RSA_2048
-  SigningAlgorithm: SHA256WITHRSA
-  Subject:
-    CommonName: pathways.internal
-  Type: ROOT
+Description: Cloudformation template to setup CA.
+Resources:
+  RootCA:
+    Type: 'AWS::ACMPCA::CertificateAuthority'
+    Properties:
+      Type: ROOT
+      KeyAlgorithm: RSA_2048
+      SigningAlgorithm: SHA256WITHRSA
+      Subject:
+        Country: UK
+        Organization: MoJ
+        OrganizationalUnit: YJB
+        DistinguishedNameQualifier:
+        State: London
+        CommonName: '*.dev.yjb.com'
+        SerialNumber: string
+        Locality: London
+        Title:
+        Surname:
+        GivenName:
+      RevocationConfiguration:
+        CrlConfiguration:
+          Enabled: false
+  RootCACertificate:
+    Type: 'AWS::ACMPCA::Certificate'
+    Properties:
+      CertificateAuthorityArn: !Ref RootCA
+      CertificateSigningRequest: !GetAtt 
+        - RootCA
+        - CertificateSigningRequest
+      SigningAlgorithm: SHA256WITHRSA
+      TemplateArn: 'arn:aws:acm-pca:::template/RootCACertificate/V1'
+      Validity:
+        Type: DAYS
+        Value: 100
+  RootCAActivation:
+    Type: 'AWS::ACMPCA::CertificateAuthorityActivation'
+    Properties:
+      CertificateAuthorityArn: !Ref RootCA
+      Certificate: !GetAtt 
+        - RootCACertificate
+        - Certificate
+      Status: ACTIVE
