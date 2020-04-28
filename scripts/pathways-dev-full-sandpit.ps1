@@ -51,6 +51,9 @@ Write-Output 'Waiting for the stack to be deleted, this may take a few minutes..
 aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $NETStackName
 Write-Output 'Delete completed'
 
+Write-Output 'Creating Private Ceriticates...'
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $NETStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_NET --capabilities CAPABILITY_NAMED_IAM 
+
 Write-Output 'Creating the stack...'
 aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $NETStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_NET --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv ParameterKey=StackName,ParameterValue=$NETStackName ParameterKey=VpcCIDR,ParameterValue=$VpcCIDR ParameterKey=DMZSubnet1CIDR,ParameterValue=$DMZSubnet1CIDR ParameterKey=DMZSubnet2CIDR,ParameterValue=$DMZSubnet2CIDR  ParameterKey=ECSSubnet1CIDR,ParameterValue=$ECSSubnet1CIDR ParameterKey=ECSSubnet2CIDR,ParameterValue=$ECSSubnet2CIDR ParameterKey=ECSSubnet3CIDR,ParameterValue=$ECSSubnet3CIDR ParameterKey=ServicesSubnet1CIDR,ParameterValue=$ServicesSubnet1CIDR ParameterKey=ServicesSubnet2CIDR,ParameterValue=$ServicesSubnet2CIDR ParameterKey=ServicesSubnet3CIDR,ParameterValue=$ServicesSubnet3CIDR ParameterKey=RDSSubnet1CIDR,ParameterValue=$RDSSubnet1CIDR ParameterKey=RDSSubnet2CIDR,ParameterValue=$RDSSubnet2CIDR ParameterKey=RDSSubnet3CIDR,ParameterValue=$RDSSubnet3CIDR ParameterKey=MongoSubnet1CIDR,ParameterValue=$MongoSubnet1CIDR ParameterKey=MongoSubnet2CIDR,ParameterValue=$MongoSubnet2CIDR ParameterKey=MongoSubnet3CIDR,ParameterValue=$MongoSubnet3CIDR ParameterKey=NamespaceName,ParameterValue=$NamespaceName
 Write-Output 'Awaiting completion of the following stacking: ' $NETStackName
