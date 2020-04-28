@@ -13,14 +13,9 @@ Resources:
         Country: UK
         Organization: MoJ
         OrganizationalUnit: YJB
-        DistinguishedNameQualifier:
         State: London
         CommonName: '*.dev.yjb.com'
-        SerialNumber: string
         Locality: London
-        Title:
-        Surname:
-        GivenName:
       RevocationConfiguration:
         CrlConfiguration:
           Enabled: false
