@@ -1,0 +1,103 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: This is a parent template for an application environment to implement all the AWS resources required i.e. ECS Cluster and associated Load Balancer.
+
+Parameters:
+  TemplateBucket:
+    Type: String
+    Description: The S3 bucket from which to fetch the templates used by this stack.
+
+  EnvironmentInstance:
+    Type: String
+
+  StackName:
+    Type: String
+
+  VpcCIDR:
+    Type: String
+
+  DMZSubnet1CIDR:
+    Type: String
+
+  DMZSubnet2CIDR:
+    Type: String
+
+  ECSSubnet1CIDR:
+    Type: String
+
+  ECSSubnet2CIDR:
+    Type: String
+
+  ECSSubnet3CIDR:
+    Type: String
+
+  ServicesSubnet1CIDR:
+    Type: String
+
+  ServicesSubnet2CIDR:
+    Type: String
+
+  ServicesSubnet3CIDR:
+    Type: String
+
+  RDSSubnet1CIDR:
+    Type: String
+
+  RDSSubnet2CIDR:
+    Type: String
+
+  RDSSubnet3CIDR:
+    Type: String
+
+  MongoSubnet1CIDR:
+    Type: String
+
+  MongoSubnet2CIDR:
+    Type: String
+
+  MongoSubnet3CIDR:
+    Type: String
+
+  NamespaceName:
+    Type: String
+
+Resources:
+
+  RootCA:
+    Type: 'AWS::ACMPCA::CertificateAuthority'
+    Properties:
+      Type: ROOT
+      KeyAlgorithm: RSA_2048
+      SigningAlgorithm: SHA256WITHRSA
+      Subject:
+        Country: UK
+        Organization: MoJ
+        OrganizationalUnit: YJB
+        State: London
+        CommonName: '*.dev.yjb.com'
+        Locality: London
+      RevocationConfiguration:
+        CrlConfiguration:
+          Enabled: false
+  RootCACertificate:
+    Type: 'AWS::ACMPCA::Certificate'
+    Properties:
+      CertificateAuthorityArn: !Ref RootCA
+      CertificateSigningRequest: !GetAtt 
+        - RootCA
+        - CertificateSigningRequest
+      SigningAlgorithm: SHA256WITHRSA
+      TemplateArn: 'arn:aws:acm-pca:::template/RootCACertificate/V1'
+      Validity:
+        Type: DAYS
+        Value: 100
+  RootCAActivation:
+    Type: 'AWS::ACMPCA::CertificateAuthorityActivation'
+    Properties:
+      CertificateAuthorityArn: !Ref RootCA
+      Certificate: !GetAtt 
+        - RootCACertificate
+        - Certificate
+      Status: ACTIVE
+ 

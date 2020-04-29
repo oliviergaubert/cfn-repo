@@ -1,0 +1,53 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: This is a parent template for an application environment to implement all the AWS resources required i.e. ECS Cluster and associated Load Balancer.
+
+Parameters:
+  TemplateBucket:
+    Type: String
+    Description: The S3 bucket from which to fetch the templates used by this stack.
+
+  ClusterName:
+    Type: String  
+
+  LbName:  
+    Type: String
+
+  DBName:
+    Type: String
+
+  EnvironmentInstance:
+    Type: String
+
+Resources:
+
+  LoadBalancer:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/ALB/load-balancer-jg.yaml"
+      Tags:
+        - Key: owner
+          Value: nps
+        - Key: EnvironmentInstance
+          Value: !Ref EnvironmentInstance
+        - Key: capability
+          Value: network
+        - Key: components
+          Value: alb
+        - Key: source-code
+          Value: na
+        - Key: application
+          Value: any
+        - Key: service
+          Value: compute
+        - Key: is-production
+          Value: no
+        - Key: runbook-description-confluence-url
+          Value: no
+        - Key: infrastructure-support
+          Value: devops
+      Parameters:
+        Subnets: { "Fn::ImportValue" : "pathways-dev-net-1-ecs-subnets" }
+        VpcId: { "Fn::ImportValue" : "pathways-dev-net-1-vpc-id" }
+

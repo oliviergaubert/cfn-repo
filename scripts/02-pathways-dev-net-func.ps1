@@ -4,7 +4,7 @@ $S3_BUCKET = "aws-cloud-formation-repo-engineering-1"
 $NETStackName = "pathways-dev-net-1"
 $AccountStackName = "pathways-dev-iam-1"
 $EnvStackName = "pathways-mm-app-dev-env-1"
-$FuncationStackName = "pathways-mm-app-dev-func-1"
+$FunctionStackName = "pathways-mm-app-dev-func-1"
 
 $AppEnv = "dev"
 $DBName = "pathwaysMmAppDevEnv"
@@ -13,9 +13,9 @@ $NamespaceName= 'pathways-dev-testing'
 ###################################### Completed ###################################################
 
 $CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml"
-$CFN_TEMPLATE_ENV = "cfn-app-dev-env-jg.yaml"
+$CFN_TEMPLATE_ENV = "cfn-app-dev-env.yaml"
 $CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
-$CFN_TEMPLATE_FUNCATION = "cfn-account-func.yaml"
+$CFN_TEMPLATE_FUNCTION = "cfn-account-func.yaml"
 
 $REGION = "eu-west-2"
 $PROFILE = "pathways-sandpit"
@@ -58,3 +58,22 @@ aws cloudformation wait stack-create-complete --stack-name $NETStackName --regio
 Write-Output 'Stacked completed'
 
 aws ecs put-account-setting-default --name awsvpcTrunking --value enabled --region $REGION --profile $PROFILE
+
+###################################### Function Creation ##############################
+
+aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_FUNCTION s3://$S3_BUCKET --region $REGION --profile $PROFILE
+
+Write-Output 'Deleting the stack...'
+aws cloudformation delete-stack --region $REGION --profile $PROFILE --stack-name $FunctionStackName
+Write-Output 'Waiting for the stack to be deleted, this may take a few minutes...'
+aws cloudformation wait stack-delete-complete --region $REGION --profile $PROFILE --stack-name $FunctionStackName
+Write-Output 'Done'
+
+aws cloudformation validate-template --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCTION
+aws cloudformation create-stack --region $REGION --profile $PROFILE --stack-name $FunctionStackName --template-url https://$S3_BUCKET.s3.$REGION.amazonaws.com/$CFN_TEMPLATE_FUNCTION --capabilities CAPABILITY_NAMED_IAM --parameters ParameterKey=TemplateBucket,ParameterValue=$S3_BUCKET ParameterKey=EnvironmentInstance,ParameterValue=$AppEnv
+aws cloudformation describe-stack-events --stack-name $FunctionStackName  --region $REGION --profile $PROFILE
+Write-Output 'Awaiting completion of the following stacking:' $FunctionStackName
+aws cloudformation wait stack-create-complete --stack-name $FunctionStackName --region $REGION --profile $PROFILE
+
+##################################################################################################
+
