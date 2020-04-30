@@ -4,21 +4,23 @@ $S3_BUCKET = "aws-cloud-formation-repo-engineering-1"
 $NETStackName = "pathways-dev-net-1"
 $AccountStackName = "pathways-dev-iam-1"
 $EnvStackName = "pathways-mm-app-dev-env-1"
-$FunctionStackName = "pathways-mm-app-dev-func-1"
+$FuncationStackName = "pathways-mm-app-dev-func-1"
 
 $AppEnv = "dev"
 $DBName = "pathwaysMmAppDevEnv1"
-$NamespaceName= 'pathways-dev-testing'
+$NamespaceName= 'pathways-dev-testing-1'
 
 ###################################### Completed ###################################################
 
-$CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml"
-$CFN_TEMPLATE_ENV = "cfn-app-dev-env-jg.yaml"
-$CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
+#$CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml" => Private Certificate
+$CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
 $CFN_TEMPLATE_FUNCTION = "cfn-account-func.yaml"
+$CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
+$CFN_TEMPLATE_ENV = "cfn-app-dev-env-jg.yaml"
 
 $REGION = "eu-west-2"
 $PROFILE = "pathways-sandpit"
+
 
 $VpcCIDR = "10.8.0.0/16"
 $DMZSubnet1CIDR = "10.8.1.0/24"

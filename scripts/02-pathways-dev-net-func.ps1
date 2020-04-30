@@ -12,10 +12,12 @@ $NamespaceName= 'pathways-dev-testing'
 
 ###################################### Completed ###################################################
 
-$CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml"
-$CFN_TEMPLATE_ENV = "cfn-app-dev-env.yaml"
-$CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
+# $CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml" => Root CA/Private Certificate (root_ca.yaml)
+$CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
 $CFN_TEMPLATE_FUNCTION = "cfn-account-func.yaml"
+$CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
+# $CFN_TEMPLATE_ENV = "cfn-app-dev-env-jg.yaml" => Create ALB only (load-balancer-jg.yaml)
+$CFN_TEMPLATE_ENV = "cfn-app-dev-env.yaml"
 
 $REGION = "eu-west-2"
 $PROFILE = "pathways-sandpit"
@@ -76,4 +78,15 @@ Write-Output 'Awaiting completion of the following stacking:' $FunctionStackName
 aws cloudformation wait stack-create-complete --stack-name $FunctionStackName --region $REGION --profile $PROFILE
 
 ##################################################################################################
+
+
+
+
+
+
+
+
+
+
+
 
