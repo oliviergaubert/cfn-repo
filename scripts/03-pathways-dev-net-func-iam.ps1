@@ -12,11 +12,12 @@ $NamespaceName= 'pathways-dev-testing-1'
 
 ###################################### Completed ###################################################
 
-#$CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml" => Private Certificate
+# $CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml" => Root CA/Private Certificate (root_ca.yaml)
 $CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
 $CFN_TEMPLATE_FUNCTION = "cfn-account-func.yaml"
 $CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
-$CFN_TEMPLATE_ENV = "cfn-app-dev-env-jg.yaml"
+# $CFN_TEMPLATE_ENV = "cfn-app-dev-env-jg.yaml" => Create ALB only (load-balancer-jg.yaml)
+$CFN_TEMPLATE_ENV = "cfn-app-dev-env.yaml"
 
 $REGION = "eu-west-2"
 $PROFILE = "pathways-sandpit"
@@ -61,7 +62,7 @@ Write-Output 'Stacked completed'
 
 aws ecs put-account-setting-default --name awsvpcTrunking --value enabled --region $REGION --profile $PROFILE
 
-###################################### Function Createion ##############################
+###################################### Function Creation ##############################
 
 aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_FUNCTION s3://$S3_BUCKET --region $REGION --profile $PROFILE
 
@@ -77,8 +78,7 @@ aws cloudformation describe-stack-events --stack-name $FunctionStackName  --regi
 Write-Output 'Awaiting completion of the following stacking:' $FunctionStackName
 aws cloudformation wait stack-create-complete --stack-name $FunctionStackName --region $REGION --profile $PROFILE
 
-
-###################################### IAMs Users/Roles Createion ##############################
+##################################################################################################
 
 aws s3 cp ..\cloudformation\templates\services\IAM\$CFN_TEMPLATE_ACCOUNT s3://$S3_BUCKET --region $REGION --profile $PROFILE
 
