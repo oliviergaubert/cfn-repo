@@ -9,6 +9,7 @@ Parameters:
     Type: String
 
 Resources:
+Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -16,8 +17,8 @@ Resources:
       SecurityGroupIngress:
         - CidrIp: "0.0.0.0/0"
           IpProtocol: "TCP"
-          FromPort: 80
-          ToPort: 80
+          FromPort: 443
+          ToPort: 443
       VpcId: !Ref VpcId
 
   LoadBalancer:
@@ -34,7 +35,7 @@ Resources:
       Port: 443
       Protocol: HTTPS
       Certificates:
-        - CertificateArn: arn:aws:acm-pca:eu-west-2:445292535623:certificate-authority/74605c73-a95c-4d48-94a9-f0382d018ed0
+        - CertificateArn: arn:aws:acm:eu-west-2:445292535623:certificate/4fa32c41-46ab-4264-865e-4d4d206a7a24
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref TargetGroup
@@ -43,13 +44,13 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       VpcId: !Ref VpcId
-      Port: 80
-      Protocol: HTTP
+      Port: 443
+      Protocol: HTTPS
       Matcher:
         HttpCode: 200-299
       HealthCheckIntervalSeconds: 10
       HealthCheckPath: /
-      HealthCheckProtocol: HTTP
+      HealthCheckProtocol: HTTPS
       HealthCheckTimeoutSeconds: 5
       HealthyThresholdCount: 2
       TargetType: "ip"
@@ -70,6 +71,8 @@ Resources:
         - TargetGroupArn: !Ref TargetGroup
           Type: forward
 
+
+
 Outputs:
   ServiceUrl:
     Description: URL of the load balancer for the sample service.
@@ -78,9 +81,9 @@ Outputs:
   SecurityGroup:
     Description: Load Balancer Security Group.
     Value: !Ref SecurityGroup 
-    Export: { "Name" : !Join ['', ['pathways-mm-app-dev-env-1', '-', 'lb-sec-grp']] }
+    Export: { "Name" : !Join ['', ['pathways-mm-app-dev-env', '-', 'lb-sec-grp']] }
 
   TargetGroup:
     Description: Load Balancer Target Group ARN.
     Value: !Ref TargetGroup 
-    Export: { "Name" : !Join ['', ['pathways-mm-app-dev-env-1', '-', 'lb-tgt-grp']] }
+    Export: { "Name" : !Join ['', ['pathways-mm-app-dev-env', '-', 'lb-tgt-grp']] }

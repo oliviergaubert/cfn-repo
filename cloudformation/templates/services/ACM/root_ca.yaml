@@ -14,7 +14,7 @@ Resources:
         Organization: MoJ
         OrganizationalUnit: YJB
         State: London
-        CommonName: '*.dev.yjb.com'
+        CommonName: 'YJB Root CA G1'
         Locality: London
       RevocationConfiguration:
         CrlConfiguration:

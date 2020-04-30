@@ -51,3 +51,4 @@ Resources:
         Subnets: { "Fn::ImportValue" : "pathways-dev-net-1-ecs-subnets" }
         VpcId: { "Fn::ImportValue" : "pathways-dev-net-1-vpc-id" }
 
+
