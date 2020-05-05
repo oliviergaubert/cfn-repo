@@ -11,9 +11,10 @@ $DBName = "pathwaysMmAppDevEnv1"
 $NamespaceName= 'pathways-dev-testing-1'
 
 ###################################### Completed ###################################################
+#=> Private Certificate
+$CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml"
+#$CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
 
-#$CFN_TEMPLATE_NET = "cfn-app-dev-network-jg.yaml" => Private Certificate
-$CFN_TEMPLATE_NET = "cfn-app-dev-network.yaml"
 $CFN_TEMPLATE_FUNCTION = "cfn-account-func.yaml"
 $CFN_TEMPLATE_ACCOUNT = "ssm_role.yaml"
 $CFN_TEMPLATE_ENV = "cfn-app-dev-env-jg.yaml"
