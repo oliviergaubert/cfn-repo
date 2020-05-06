@@ -10,3 +10,4 @@ gen
 .gitignore
 .idea/
 pathways-devops.iml
+*.xml

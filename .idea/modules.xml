@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/pathways-devops.iml" filepath="$PROJECT_DIR$/pathways-devops.iml" />
+      <module fileurl="file://$PROJECT_DIR$/asset-plus.iml" filepath="$PROJECT_DIR$/asset-plus.iml" />
     </modules>
   </component>
 </project>
