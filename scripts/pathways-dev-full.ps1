@@ -20,6 +20,8 @@ $CFN_TEMPLATE_FUNCATION = "cfn-account-func.yaml"
 $REGION = "eu-west-2"
 $PROFILE = "i2n-engineering"
 
+$AWS_CIRCLECI_TOKEN = "08fccf1996742f4c7a3b8510eff167d456785bf0"
+
 $VpcCIDR = "10.8.0.0/16"
 $DMZSubnet1CIDR = "10.8.1.0/24"
 $DMZSubnet2CIDR = "10.8.2.0/24"
