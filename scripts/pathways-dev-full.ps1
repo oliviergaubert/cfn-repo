@@ -41,7 +41,7 @@ $MongoSubnet3CIDR = "10.8.32.0/24"
 ###################################### Network ###################################################
 
 Write-Output 'Copying templete to S3...'
-aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_NET s3://$S3_BUCKET --region $REGION --profile $PROFILE
+aws s3 cp ..\cloudformation\$AppEnv\$CFN_TEMPLATE_NET s3://$S3_BUCKET --region eu-west-2 --profile i2n-engineering
 aws s3 cp --recursive ..\cloudformation\templates s3://$S3_BUCKET/templates --region $REGION --profile $PROFILE
 aws s3 cp --recursive ..\cloudformation\lambda s3://$S3_BUCKET/lambda --region $REGION --profile $PROFILE
 

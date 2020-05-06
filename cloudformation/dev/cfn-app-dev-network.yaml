@@ -167,29 +167,3 @@ Resources:
         Name: !Ref StackName
         VpcId: !GetAtt VPC.Outputs.VpcId
         NamespaceName: !Ref NamespaceName
-
-  Detective:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Sub "https://s3.amazonaws.com/${TemplateBucket}/templates/services/detective/detective.yaml"
-      Tags:
-        - Key: owner
-          Value: nps
-        - Key: EnvironmentInstance
-          Value: !Ref EnvironmentInstance
-        - Key: capability
-          Value: network
-        - Key: components
-          Value: Detective
-        - Key: source-code
-          Value: na
-        - Key: application
-          Value: any
-        - Key: service
-          Value: compute
-        - Key: is-production
-          Value: no
-        - Key: runbook-description-confluence-url
-          Value: no
-        - Key: infrastructure-support
-          Value: devops
